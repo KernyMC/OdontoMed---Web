@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar     from '../../components/Navbar.astro';
+import Footer     from '../../components/Footer.astro';
+import { services } from '../../data/services';
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props:  { service },
+  }));
+}
+
+const { service } = Astro.props;
+---
+
+<BaseLayout
+  title={`${service.title} | Odontomed — ${service.category} en Conocoto`}
+  description={`${service.desc} Tratamiento de ${service.title.toLowerCase()} en Odontomed, clínica dental en Conocoto, Valle de los Chillos, Quito.`}
+  ogImage={service.imgSrc}
+  bodyTheme="dark"
+>
+  <Navbar />
+
+  <!-- Hero -->
+  <section class="pt-40 pb-20 px-6 lg:px-12 min-h-[70vh] flex flex-col justify-center bg-brand-teal text-white border-b border-white/10" data-color="dark">
+    <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row items-center gap-16">
+
+      <div class="w-full lg:w-1/2">
+        <a href="/servicios" class="mb-8 font-sans text-xs uppercase tracking-widest text-brand-light hover:text-white transition-colors flex items-center gap-2 gsap-detail-hero inline-flex">
+          <span>←</span> Volver a Servicios
+        </a>
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-white/50 gsap-detail-hero mt-4">
+          {service.category}
+        </span>
+        <h1 class="font-serif text-[4rem] md:text-[6rem] leading-[0.9] tracking-tighter mb-8 gsap-detail-hero">
+          {service.title}
+        </h1>
+        <p class="font-sans text-xl opacity-90 max-w-lg gsap-detail-hero">{service.desc}</p>
+        <div class="mt-12 gsap-detail-hero">
+          <a href="/contacto" class="bg-brand-accent text-white px-8 py-4 text-sm uppercase tracking-widest hover:bg-white hover:text-brand-teal transition-colors border border-brand-accent inline-block font-bold">
+            Agendar este tratamiento
+          </a>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-1/2 h-[50vh] lg:h-[60vh] overflow-hidden gsap-detail-hero border border-white/20">
+        <img
+          src={service.imgSrc}
+          alt={`Tratamiento de ${service.title} en Odontomed`}
+          class="w-full h-full object-cover filter grayscale contrast-125 hover:grayscale-0 transition-all duration-1000"
+          loading="lazy" width="800" height="600"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Body -->
+  <section class="py-32 px-6 lg:px-12 bg-white" data-color="light">
+    <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-20">
+
+      <div class="w-full md:w-2/3 gsap-detail-content text-brand-teal">
+        <h2 class="font-serif text-[3rem] md:text-[4rem] leading-none mb-8">
+          Sobre el <span class="italic text-brand-teal">Procedimiento.</span>
+        </h2>
+        <p class="font-sans text-xl leading-relaxed mb-8 opacity-80">
+          En Odontomed diseñamos cada etapa de tu tratamiento pensando en tu bienestar y en resultados a largo plazo. Este procedimiento se realiza utilizando tecnología de vanguardia para asegurar el mínimo dolor, reduciendo los tiempos de recuperación y maximizando la eficacia.
+        </p>
+        <p class="font-sans text-lg leading-relaxed mb-12 opacity-80">
+          Nuestro equipo de especialistas te acompañará durante todo el proceso, comenzando con un diagnóstico honesto y preciso. Resolvemos todas tus dudas y aseguramos que tu experiencia sea completamente satisfactoria desde la primera consulta hasta el alta final.
+        </p>
+        <div class="bg-brand-teal/5 p-8 border-l-2 border-brand-accent">
+          <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-4 text-brand-teal">¿Por qué elegirnos?</h3>
+          <p class="font-sans text-base opacity-80">
+            Utilizamos protocolos internacionales y materiales de primera calidad certificados. Tu salud es nuestra prioridad número uno en el Valle de los Chillos.
+          </p>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="w-full md:w-1/3 gsap-detail-content">
+        <div class="border border-brand-teal/20 p-8 sticky top-32 bg-white text-brand-teal">
+          <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-8 text-brand-accent">Beneficios Clave</h3>
+          <ul class="space-y-6 font-sans text-sm opacity-80">
+            <li class="flex items-start gap-4">
+              <span class="text-brand-accent text-xl leading-none">✓</span>
+              <span><strong>Resultados duraderos</strong><br />Alta estética y funcionalidad inmediata.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="text-brand-accent text-xl leading-none">✓</span>
+              <span><strong>Recuperación rápida</strong><br />Técnicas mínimamente invasivas.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="text-brand-accent text-xl leading-none">✓</span>
+              <span><strong>Materiales premium</strong><br />Biocompatibles y de alta resistencia.</span>
+            </li>
+            <li class="flex items-start gap-4">
+              <span class="text-brand-accent text-xl leading-none">✓</span>
+              <span><strong>Atención personalizada</strong><br />Seguimiento continuo de tu especialista.</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    if (!window.gsap) return;
+    gsap.fromTo('.gsap-detail-hero',    { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.1,  ease: 'power2.out' });
+    gsap.fromTo('.gsap-detail-content', { y: 50, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: 'power2.out',
+      scrollTrigger: { trigger: '.gsap-detail-content', start: 'top 75%' },
+    });
+  });
+</script>

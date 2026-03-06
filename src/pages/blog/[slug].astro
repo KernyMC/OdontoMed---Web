@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Navbar     from '../../components/Navbar.astro';
+import Footer     from '../../components/Footer.astro';
+import { articles } from '../../data/articles';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props:  { article },
+  }));
+}
+
+const { article } = Astro.props;
+---
+
+<BaseLayout
+  title={`${article.title} | Blog Odontomed`}
+  description={article.excerpt}
+  ogImage={article.imgSrc}
+  bodyTheme="light"
+>
+  <Navbar />
+
+  <article>
+
+    <!-- Header -->
+    <header class="pt-40 pb-16 px-6 lg:px-12 bg-white text-brand-teal" data-color="light">
+      <div class="max-w-[1200px] mx-auto text-center">
+        <nav class="mb-12 font-sans text-xs uppercase tracking-widest text-brand-teal/50 gsap-post-hero" aria-label="Ruta de navegación">
+          <a href="/" class="hover:text-brand-accent transition-colors">Inicio</a>
+          <span class="mx-2" aria-hidden="true">/</span>
+          <a href="/blog" class="hover:text-brand-accent transition-colors">Blog</a>
+          <span class="mx-2" aria-hidden="true">/</span>
+          <span class="text-brand-accent font-bold">{article.category}</span>
+        </nav>
+        <h1 class="font-serif text-[4rem] md:text-[5.5rem] leading-[0.9] tracking-tighter mb-8 gsap-post-hero mx-auto max-w-5xl">
+          {article.title}
+        </h1>
+        <div class="flex items-center justify-center gap-6 font-sans text-sm tracking-widest uppercase text-brand-teal/60 gsap-post-hero">
+          <span class="flex items-center gap-2">
+            <span class="w-8 h-[1px] bg-brand-accent" aria-hidden="true"></span>
+            Por Dra. Julienne Hong
+          </span>
+          <time datetime={article.date} class="italic normal-case font-serif text-lg">{article.date}</time>
+          <span class="bg-brand-teal/5 px-3 py-1 rounded-full text-[0.65rem] font-bold">{article.readTime} de lectura</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero image -->
+    <section class="px-6 lg:px-12 pb-20 bg-white">
+      <div class="max-w-[1600px] mx-auto h-[60vh] md:h-[75vh] overflow-hidden gsap-post-img-container">
+        <img
+          src={article.imgSrc} alt={article.title}
+          class="w-full h-full object-cover filter grayscale-[30%] hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
+          loading="eager" width="1600" height="750"
+        />
+      </div>
+    </section>
+
+    <!-- Body + TOC -->
+    <section class="pb-32 px-6 lg:px-12 bg-white">
+      <div class="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 xl:gap-24">
+
+        <!-- TOC Sidebar -->
+        <aside class="w-full lg:w-1/4 hidden lg:block">
+          <div class="sticky top-32 border-l border-brand-teal/20 pl-8 py-2 gsap-post-toc">
+            <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-8 text-brand-teal">En este artículo</p>
+            <nav class="flex flex-col gap-4 font-sans text-sm opacity-80 text-brand-teal" aria-label="Tabla de contenidos">
+              <a href="#seccion-1" class="toc-link">1. La evolución de la estética</a>
+              <a href="#seccion-2" class="toc-link">2. ¿Para quién son ideales?</a>
+              <a href="#seccion-3" class="toc-link">3. El proceso paso a paso</a>
+              <a href="#seccion-4" class="toc-link">4. Cuidados y mantenimiento</a>
+            </nav>
+            <div class="mt-16 pt-8 border-t border-brand-teal/20">
+              <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-6 text-brand-teal">Compartir</p>
+              <div class="flex gap-4">
+                <button aria-label="Compartir en LinkedIn"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">IN</button>
+                <button aria-label="Compartir en Facebook"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">FB</button>
+                <button aria-label="Compartir en Twitter/X" class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">TW</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Contenido del artículo -->
+        <div class="w-full lg:w-2/3 xl:w-7/12 article-content text-brand-teal gsap-post-content">
+
+          <p class="drop-cap">
+            El mundo de la odontología estética ha avanzado a pasos agigantados en la última década. Lo que
+            antes requería procedimientos invasivos y largas semanas de espera, hoy se puede lograr con una
+            precisión milimétrica, materiales ultrarresistentes y un enfoque mínimamente invasivo.
+          </p>
+          <p>
+            En nuestra clínica en el Valle de los Chillos, hemos notado un incremento masivo en pacientes
+            que buscan resultados naturales. Hoy, la tendencia es la armonía facial: dientes que reflejen la
+            luz como el esmalte natural, con microtexturas y transparencias en los bordes incisales.
+          </p>
+
+          <h2 id="seccion-1">1. La evolución de la estética dental</h2>
+          <p>
+            La tecnología digital ha revolucionado nuestra forma de trabajar. Ahora, mediante escáneres
+            intraorales 3D, podemos predecir el resultado final antes de tocar un solo diente. Esto se conoce
+            como Diseño de Sonrisa Digital (DSD), una herramienta que nos permite tomar decisiones conjuntas
+            sobre la forma, tamaño y color ideal.
+          </p>
+          <blockquote>
+            "El verdadero arte de la odontología cosmética es crear una sonrisa que nadie sepa que fue diseñada en un consultorio."
+          </blockquote>
+
+          <h2 id="seccion-2">2. ¿Para quién son ideales?</h2>
+          <p>Las carillas son extremadamente versátiles. Se recomiendan especialmente para pacientes con:</p>
+          <ul class="list-none space-y-4 mb-8 font-sans opacity-85 text-lg">
+            <li class="flex items-start gap-3"><span class="text-brand-accent">◆</span> Manchas severas que no responden al blanqueamiento.</li>
+            <li class="flex items-start gap-3"><span class="text-brand-accent">◆</span> Ligeros apiñamientos o diastemas entre los dientes.</li>
+            <li class="flex items-start gap-3"><span class="text-brand-accent">◆</span> Desgaste del esmalte por bruxismo o edad.</li>
+            <li class="flex items-start gap-3"><span class="text-brand-accent">◆</span> Fracturas o astillamientos menores.</li>
+          </ul>
+
+          <h2 id="seccion-3">3. El proceso paso a paso</h2>
+          <p>
+            El procedimiento moderno requiere un tallado mínimo del diente natural. En solo dos o tres citas,
+            pasamos del escaneo inicial a la cementación definitiva. Utilizamos resinas de alta estética o
+            disilicato de litio (porcelana) para durabilidad insuperable que no pierde su brillo con los años.
+          </p>
+          <figure class="my-12">
+            <img
+              src={article.imgSrc} alt="Proceso dental en consultorio"
+              class="w-full h-auto object-cover grayscale-[20%]"
+              loading="lazy" width="1200" height="675"
+            />
+            <figcaption class="text-sm font-sans mt-4 opacity-60 text-center uppercase tracking-widest">
+              Escaneo 3D y preparación en consultorio.
+            </figcaption>
+          </figure>
+
+          <h2 id="seccion-4">4. Cuidados y mantenimiento</h2>
+          <p>
+            El mantenimiento es tan sencillo como cuidar tus dientes naturales: cepillado adecuado, hilo
+            dental y visitas cada 6 meses. Evitar usar los dientes como herramientas garantizará que tu
+            inversión dure más de una década en perfectas condiciones.
+          </p>
+
+          <!-- CTA final -->
+          <div class="mt-20 p-10 bg-brand-teal/5 border border-brand-teal/20 text-center">
+            <h3 class="font-serif text-3xl mb-4 italic text-brand-teal">¿Listo para transformar tu sonrisa?</h3>
+            <p class="font-sans mb-8 opacity-80">Agenda una valoración sin compromiso con nuestros especialistas en Conocoto.</p>
+            <a href="/contacto" class="bg-brand-accent text-white px-8 py-4 text-xs uppercase tracking-widest hover:bg-brand-teal transition-colors font-bold inline-block">
+              Agendar Evaluación Gratuita
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </article>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    if (!window.gsap || !window.ScrollTrigger) return;
+
+    gsap.fromTo('.gsap-post-hero', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: 'power2.out' });
+    gsap.fromTo('.gsap-post-img-container',
+      { clipPath: 'inset(10% 10% 10% 10%)', opacity: 0 },
+      { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, duration: 1.5, delay: 0.3, ease: 'power3.inOut' }
+    );
+    gsap.fromTo('.gsap-post-toc', { x: -30, opacity: 0 }, {
+      x: 0, opacity: 1, duration: 1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.gsap-post-content', start: 'top 70%' },
+    });
+    gsap.fromTo('.gsap-post-content > *', { y: 30, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: 'power2.out',
+      scrollTrigger: { trigger: '.gsap-post-content', start: 'top 70%' },
+    });
+  });
+</script>

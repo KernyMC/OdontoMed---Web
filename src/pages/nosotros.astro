@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar     from '../components/Navbar.astro';
+import Footer     from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Nosotros | Odontomed — Clínica Dental en Conocoto"
+  description="Conoce al equipo de especialistas de Odontomed en Conocoto. Profesionales apasionados por la salud y estética dental en el Valle de los Chillos."
+  bodyTheme="soft"
+>
+  <Navbar />
+
+  <section class="pt-40 pb-32 px-6 lg:px-12 min-h-screen flex items-center bg-brand-soft" data-color="soft">
+    <div class="max-w-[1400px] mx-auto text-center">
+      <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent">
+        Nuestra Historia
+      </span>
+      <h1 class="font-serif text-[4rem] md:text-[6rem] leading-[0.9] text-brand-teal mb-8">
+        Sobre <span class="italic text-outline" style="-webkit-text-stroke: 1px #448087; color: transparent;">Nosotros.</span>
+      </h1>
+      <p class="font-sans text-xl opacity-80 max-w-2xl mx-auto text-brand-teal">
+        Somos un equipo de especialistas apasionados por el diseño de sonrisas y el bienestar integral de tu familia en el Valle de los Chillos.
+      </p>
+      <div class="mt-12">
+        <a
+          href="/servicios"
+          class="bg-brand-accent text-white px-8 py-4 text-xs uppercase tracking-widest font-bold inline-block hover:bg-brand-teal transition-colors"
+        >
+          Ver nuestros servicios
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>

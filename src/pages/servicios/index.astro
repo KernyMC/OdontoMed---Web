@@ -1,0 +1,74 @@
+---
+import BaseLayout  from '../../layouts/BaseLayout.astro';
+import Navbar      from '../../components/Navbar.astro';
+import Footer      from '../../components/Footer.astro';
+import ServiceCard from '../../components/ui/ServiceCard.astro';
+import { services } from '../../data/services';
+
+const odontologia = services.filter((s) => s.group === 'odontologia');
+const medicina    = services.filter((s) => s.group === 'medicina');
+---
+
+<BaseLayout
+  title="Servicios | Odontomed — Especialidades Dentales y Médicas en Conocoto"
+  description="Ortodoncia, implantes, carillas, endodoncia, medicina general, pediatría y más. Todas las especialidades en una sola clínica en Conocoto, Quito."
+  bodyTheme="dark"
+>
+  <Navbar />
+
+  <!-- Banner -->
+  <section class="pt-40 pb-24 px-6 lg:px-12 bg-brand-teal text-white" data-color="dark">
+    <div class="max-w-[1400px] mx-auto text-center">
+      <span class="block text-[0.65rem] uppercase tracking-[0.4em] font-sans font-bold mb-6 text-brand-light">Clínica Integral</span>
+      <h1 class="font-serif text-[3.5rem] md:text-[5rem] leading-[0.9] tracking-tighter mb-6">
+        Nuestras <span class="italic text-white/90">Especialidades.</span>
+      </h1>
+      <p class="font-sans text-lg md:text-xl font-light opacity-80 max-w-2xl mx-auto">
+        Tecnología de punta y especialistas dedicados a tu bienestar integral. Explora nuestras áreas de atención odontológica y médica.
+      </p>
+    </div>
+  </section>
+
+  <!-- Grid de servicios -->
+  <section id="servicios-container" class="py-24 px-6 lg:px-12 bg-white" data-color="light">
+    <div class="max-w-[1600px] mx-auto">
+      <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
+
+        <!-- Odontología -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+          <h2 class="flex flex-col mb-12 lg:mb-16">
+            <span class="font-serif text-[4.5rem] md:text-[6rem] leading-[0.8] tracking-tighter text-brand-teal">ODONTO</span>
+            <span class="font-sans text-sm md:text-lg tracking-[0.4em] font-bold text-brand-accent uppercase pl-1 mt-4">Logía</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            {odontologia.map((s) => <ServiceCard {...s} />)}
+          </div>
+        </div>
+
+        <!-- Medicina -->
+        <div class="w-full lg:w-1/2 flex flex-col pt-12 lg:pt-0">
+          <h2 class="flex flex-col mb-12 lg:mb-16">
+            <span class="font-serif text-[4.5rem] md:text-[6rem] leading-[0.8] tracking-tighter text-brand-teal">MED</span>
+            <span class="font-sans text-sm md:text-lg tracking-[0.4em] font-bold text-brand-accent uppercase pl-1 mt-4">icina</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+            {medicina.map((s) => <ServiceCard {...s} />)}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    if (!window.gsap || !window.ScrollTrigger) return;
+    gsap.fromTo('.gsap-service-item', { y: 50, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power2.out',
+      scrollTrigger: { trigger: '#servicios-container', start: 'top 90%', once: true },
+    });
+  });
+</script>

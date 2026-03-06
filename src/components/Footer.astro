@@ -1,0 +1,73 @@
+---
+/**
+ * Footer.astro — Compartido en todas las páginas.
+ */
+---
+
+<footer class="py-20 px-6 lg:px-12" data-color="dark">
+  <div class="max-w-[1600px] mx-auto border-t border-[var(--text-color)] pt-16 grid grid-cols-1 lg:grid-cols-4 gap-12">
+
+    <!-- Col 1: Brand -->
+    <div class="lg:col-span-1">
+      <a href="/" class="group inline-block mb-6">
+        <img
+          src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=375,h=236,fit=crop/YrDQXj4Jr9UWZDOn/logo-horizontal---impresion-AVLBNkzOnBCxe5Dz.png"
+          alt="Logo Odontomed"
+          class="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 theme-logo"
+          width="200" height="50"
+          loading="lazy"
+        />
+      </a>
+      <p class="font-sans text-sm opacity-70 leading-relaxed">
+        Odontomed es tu clínica dental en el Valle de los Chillos, en Conocoto, Quito. Especialistas en
+        salud y estética dental para adultos y niños, con todas las especialidades en un solo lugar.
+      </p>
+    </div>
+
+    <!-- Col 2: Contacto -->
+    <div class="lg:col-span-1 flex flex-col font-sans text-sm tracking-wide">
+      <p class="text-[0.6rem] uppercase text-brand-accent mb-4 tracking-widest font-bold">Contacto & Ubicación</p>
+      <address class="not-italic space-y-4 opacity-80">
+        <p><strong>Dirección:</strong><br />Av. Jaime Roldos Aguilera, Quito, Ecuador.</p>
+        <p><strong>Teléfono:</strong><br /><a href="tel:0979286633" class="hover:text-brand-accent transition-colors">097 928 6633</a></p>
+        <p><strong>Horarios:</strong><br />Lun–Vie: 08h30 – 19h00<br />Sábados: 08h30 – 15h00</p>
+      </address>
+      <a
+        href="https://wa.me/593979286633"
+        target="_blank" rel="noopener noreferrer"
+        class="inline-block bg-brand-accent text-white px-4 py-3 text-[0.65rem] uppercase tracking-widest hover:bg-white hover:text-brand-teal transition-colors mt-6 text-center font-bold w-fit border border-brand-accent"
+      >
+        Agenda por WhatsApp
+      </a>
+    </div>
+
+    <!-- Col 3: Nav -->
+    <div class="lg:col-span-1 flex flex-col font-sans text-sm tracking-widest uppercase">
+      <p class="text-[0.6rem] text-brand-accent mb-4 font-bold">Navegación</p>
+      <nav class="flex flex-col gap-4 opacity-80">
+        <a href="/"          class="hover:italic hover:text-brand-accent transition-all">Inicio</a>
+        <a href="/nosotros"  class="hover:italic hover:text-brand-accent transition-all">Nosotros</a>
+        <a href="/servicios" class="hover:italic hover:text-brand-accent transition-all">Servicios</a>
+        <a href="/blog"      class="hover:italic hover:text-brand-accent transition-all">Blog</a>
+        <a href="/contacto"  class="hover:italic hover:text-brand-accent transition-all">Contacto</a>
+      </nav>
+
+      <p class="text-[0.6rem] text-brand-accent mb-4 mt-8 font-bold">Redes Sociales</p>
+      <div class="flex gap-4 opacity-80">
+        <a href="#" class="hover:text-brand-accent transition-colors" aria-label="Instagram">Instagram</a>
+        <a href="#" class="hover:text-brand-accent transition-colors" aria-label="Facebook">Facebook</a>
+      </div>
+    </div>
+
+    <!-- Col 4: SEO tagline -->
+    <div class="lg:col-span-1 flex flex-col justify-end">
+      <div class="border-t border-[var(--text-color)]/30 pt-6 mt-8 lg:mt-0">
+        <p class="font-serif italic text-lg opacity-60 leading-relaxed">
+          "Odontólogo en el Valle de los Chillos, odontología en Conocoto y clínica dental en Quito para toda la familia."
+        </p>
+        <p class="mt-8 opacity-40 lowercase font-sans text-xs">© 2026 Clínica Odontomed.</p>
+      </div>
+    </div>
+
+  </div>
+</footer>

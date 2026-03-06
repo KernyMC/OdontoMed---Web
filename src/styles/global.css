@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────
+   THEME TOKENS — Tailwind v4
+   Define brand palette + dynamic aliases for data-theme switching
+───────────────────────────────────────────────────────────────── */
+@theme {
+  --font-serif: "Fraunces", Arial, sans-serif;
+  --font-sans:  "Hanken Grotesk", Arial, sans-serif;
+
+  /* Static brand palette */
+  --color-brand-teal:  #448087;
+  --color-brand-accent:#189AA0;
+  --color-brand-light: #CADDDE;
+  --color-brand-soft:  #F4F7F8;
+  --color-brand-hover: #E8F0F1;
+
+  /* Dynamic aliases — resolved at runtime via CSS custom properties */
+  --color-bg:     var(--bg-color,    #FFFFFF);
+  --color-text:   var(--text-color,  #448087);
+  --color-accent: var(--accent-color,#189AA0);
+  --color-hover:  var(--hover-bg,    #E8F0F1);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   DYNAMIC THEME DEFINITIONS
+   Changing body[data-theme] triggers CSS variable cascade
+───────────────────────────────────────────────────────────────── */
+:root,
+body[data-theme="light"] {
+  --bg-color:     #FFFFFF;
+  --text-color:   #448087;
+  --accent-color: #189AA0;
+  --hover-bg:     #E8F0F1;
+}
+
+body[data-theme="dark"] {
+  --bg-color:     #448087;
+  --text-color:   #FFFFFF;
+  --accent-color: #CADDDE;
+  --hover-bg:     #3A7077;
+}
+
+body[data-theme="soft"] {
+  --bg-color:     #F4F7F8;
+  --text-color:   #448087;
+  --accent-color: #189AA0;
+  --hover-bg:     #E8F0F1;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────────────────────────── */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition:
+    background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  font-family: "Hanken Grotesk", Arial, sans-serif;
+  font-size: 18px;
+}
+
+::-webkit-scrollbar { width: 0; background: transparent; display: none; }
+
+/* ─────────────────────────────────────────────────────────────────
+   TYPOGRAPHY SCALE
+───────────────────────────────────────────────────────────────── */
+h1    { font-family: "Fraunces",      Arial, sans-serif; font-size: 72px; }
+h2    { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 36px; }
+h3    { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 28px; }
+h4    { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 22px; }
+h5    { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 18px; }
+h6    { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 16px; }
+p     { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 18px; }
+small { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 14px; }
+
+/* ─────────────────────────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────────────────────────── */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-color);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   NAVBAR
+───────────────────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--text-color);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+#navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  margin: 0 auto;
+  width: 100%;
+  z-index: 50;
+  padding: 1.5rem;
+  border: 1px solid transparent;
+  /* Geometry + background are scrubbed by GSAP — only text colour uses CSS transition */
+  transition: color 0.4s ease-out;
+}
+
+/* Only text/colour overrides — geometry is owned by GSAP scrub */
+#navbar.scrolled {
+  color: #448087 !important;
+}
+#navbar.scrolled .nav-link        { color: #448087 !important; }
+#navbar.scrolled .nav-link::after { background-color: #448087 !important; }
+#navbar.scrolled .theme-logo      { filter: none !important; }
+#navbar.scrolled .nav-cta         { background-color: #189AA0 !important; border-color: #189AA0 !important; color: #FFFFFF !important; }
+#navbar.scrolled .nav-cta:hover   { background-color: #FFFFFF !important; color: #448087 !important; }
+
+/* ── CTA button base (light / default) ──────────────────────────────────── */
+.nav-cta {
+  background-color: #189AA0;
+  border-color:     #189AA0;
+  color:            #FFFFFF;
+  box-shadow: 0 4px 14px -4px rgba(24,154,160,0.4);
+}
+.nav-cta:hover {
+  background-color: #FFFFFF;
+  border-color:     #189AA0;
+  color:            #448087;
+}
+
+/* ── Adaptive navbar colour — controlled by JS via nav-dark / nav-light ── */
+/* These use ID+class specificity (1-1-0) to override the Tailwind utility  */
+#navbar.nav-dark,
+#navbar.nav-dark .nav-link               { color: #FFFFFF; }
+#navbar.nav-dark .nav-link::after        { background-color: #FFFFFF; }
+
+/* CTA on dark backgrounds: white bg, accent border, accent text */
+#navbar.nav-dark .nav-cta {
+  background-color: #FFFFFF;
+  border-color:     #189AA0;
+  color:            #189AA0;
+  box-shadow: 0 4px 14px -4px rgba(255,255,255,0.2);
+}
+#navbar.nav-dark .nav-cta:hover {
+  background-color: #189AA0;
+  border-color:     #189AA0;
+  color:            #FFFFFF;
+}
+
+#navbar.nav-light,
+#navbar.nav-light .nav-link              { color: #448087; }
+#navbar.nav-light .nav-link::after       { background-color: #448087; }
+
+/* CTA on light backgrounds: default teal */
+#navbar.nav-light .nav-cta {
+  background-color: #189AA0;
+  border-color:     #189AA0;
+  color:            #FFFFFF;
+}
+#navbar.nav-light .nav-cta:hover {
+  background-color: #FFFFFF;
+  border-color:     #189AA0;
+  color:            #448087;
+}
+
+/* Logo adapts to dark sections */
+#navbar.nav-dark .theme-logo  { filter: brightness(0) invert(1); }
+#navbar.nav-light .theme-logo { filter: none; }
+body[data-theme="dark"] .theme-logo { filter: brightness(0) invert(1); }
+
+@media (max-width: 768px) {
+  #navbar         { padding: 1.5rem 1rem; }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ARTICLE / BLOG
+───────────────────────────────────────────────────────────────── */
+.article-content p {
+  margin-bottom: 2rem;
+  line-height: 1.8;
+  opacity: 0.85;
+}
+.article-content h2 {
+  font-size: 2.5rem;
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+.article-content h3 {
+  font-size: 1.8rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+.article-content blockquote {
+  border-left: 2px solid var(--accent-color);
+  padding-left: 2rem;
+  font-size: 1.8rem;
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  margin: 3rem 0;
+  line-height: 1.4;
+  color: #448087;
+}
+
+.drop-cap::first-letter {
+  font-family: "Fraunces", serif;
+  float: left;
+  font-size: 6rem;
+  line-height: 0.7;
+  padding-top: 0.1rem;
+  padding-right: 1rem;
+  color: var(--accent-color);
+  font-style: italic;
+}
+
+.toc-link { transition: color 0.3s ease, padding-left 0.3s ease; }
+.toc-link:hover { color: var(--accent-color); padding-left: 0.5rem; }

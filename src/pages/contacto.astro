@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar     from '../components/Navbar.astro';
+import Footer     from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Contacto | Odontomed — Reserva tu Cita en Conocoto"
+  description="Reserva tu cita en Odontomed, clínica dental en Conocoto, Valle de los Chillos. Llámanos al 097 928 6633 o escríbenos por WhatsApp."
+  bodyTheme="dark"
+>
+  <Navbar />
+
+  <section class="min-h-screen pt-40 pb-20 px-6 lg:px-12 flex items-center bg-brand-teal text-white" data-color="dark">
+    <div class="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20">
+
+      <!-- Info -->
+      <div class="gsap-contact-text">
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-8 text-brand-accent">Conecta con Nosotros</span>
+        <h1 class="font-serif text-[5rem] md:text-[7rem] leading-[0.9] mb-8">
+          Dí <span class="italic" style="-webkit-text-stroke: 1px white; color: transparent;">Hola.</span>
+        </h1>
+        <p class="font-sans text-xl mb-12 opacity-80 max-w-md">
+          Estamos listos para transformar tu sonrisa. Envíanos un mensaje o agenda tu visita hoy.
+        </p>
+        <address class="not-italic space-y-8 font-sans text-sm uppercase tracking-widest">
+          <div>
+            <p class="text-[0.6rem] text-brand-accent mb-2">Dirección</p>
+            <p class="opacity-80">Av. Jaime Roldos Aguilera,<br />Conocoto, Quito, Ecuador</p>
+          </div>
+          <div>
+            <p class="text-[0.6rem] text-brand-accent mb-2">Teléfono</p>
+            <a href="tel:0979286633" class="font-serif text-2xl normal-case hover:italic hover:text-brand-accent transition-all duration-300">
+              097 928 6633
+            </a>
+          </div>
+        </address>
+      </div>
+
+      <!-- Form -->
+      <div class="flex flex-col justify-center gsap-contact-form">
+        <form class="space-y-12 w-full max-w-lg" action="#" method="POST" novalidate>
+          <div>
+            <label for="name" class="sr-only">Tu nombre</label>
+            <input
+              id="name" type="text" name="name" autocomplete="name"
+              class="w-full bg-transparent border-b border-white py-4 focus:outline-none focus:border-brand-accent transition-colors font-sans text-lg text-white placeholder:text-white placeholder:opacity-40"
+              placeholder="Tu Nombre"
+            />
+          </div>
+          <div>
+            <label for="email" class="sr-only">Tu correo electrónico</label>
+            <input
+              id="email" type="email" name="email" autocomplete="email"
+              class="w-full bg-transparent border-b border-white py-4 focus:outline-none focus:border-brand-accent transition-colors font-sans text-lg text-white placeholder:text-white placeholder:opacity-40"
+              placeholder="Tu Correo Electrónico"
+            />
+          </div>
+          <div>
+            <label for="message" class="sr-only">Tu mensaje</label>
+            <textarea
+              id="message" name="message" rows="4"
+              class="w-full bg-transparent border-b border-white py-4 focus:outline-none focus:border-brand-accent transition-colors font-sans text-lg text-white placeholder:text-white placeholder:opacity-40 resize-none"
+              placeholder="¿Cómo podemos ayudarte?"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="bg-brand-accent text-white px-10 py-5 text-sm uppercase tracking-widest hover:bg-white hover:text-brand-teal transition-colors duration-300 w-full text-center font-bold"
+          >
+            Enviar Mensaje
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    if (!window.gsap) return;
+    gsap.fromTo('.gsap-contact-text > *', { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, stagger: 0.1,  ease: 'power2.out' });
+    gsap.fromTo('.gsap-contact-form',     { x: 30,  opacity: 0 }, { x: 0, opacity: 1, duration: 1,   delay: 0.3, ease: 'power2.out' });
+  });
+</script>

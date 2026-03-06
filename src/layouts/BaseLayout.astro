@@ -1,0 +1,205 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title?:       string;
+  description?: string;
+  ogImage?:     string;
+  bodyTheme?:   'dark' | 'light' | 'soft';
+}
+
+const {
+  title       = 'Odontomed | Clínica Odontológica en Conocoto, Valle de los Chillos',
+  description = 'Clínica dental en Conocoto, Quito. Especialistas en ortodoncia, implantes, carillas, endodoncia y medicina general. Tecnología de punta para toda la familia.',
+  ogImage     = '/og-image.jpg',
+  bodyTheme   = 'dark',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odontomed.ec');
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Core -->
+    <title>{title}</title>
+    <meta name="description"  content={description} />
+    <link rel="canonical"     href={canonicalURL} />
+    <meta name="robots"       content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:locale"      content="es_EC" />
+    <meta property="og:site_name"   content="Odontomed" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <ViewTransitions />
+  </head>
+
+  <body
+    data-theme={bodyTheme}
+    class="antialiased selection:bg-brand-accent selection:text-white"
+  >
+    <slot />
+
+    <!--
+      Vite-processed script — Astro runs this ONCE and never re-executes it on
+      View Transitions navigation. This eliminates the CDN re-execution crash
+      ("Cannot set property window") that happened with raw <script src> tags.
+    -->
+    <script>
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from '@studio-freight/lenis';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Expose as globals so page-level <script is:inline> can use them
+      (window as any).gsap          = gsap;
+      (window as any).ScrollTrigger = ScrollTrigger;
+      (window as any).Lenis         = Lenis;
+
+      // ── Module-level refs so we can tear down before re-initialising ──
+      let _lenis:       InstanceType<typeof Lenis> | null = null;
+      let _rafCallback: ((time: number) => void) | null   = null;
+      // Only tracks triggers created by initApp/initThemeTriggers — NOT page animation triggers.
+      // This prevents initApp from killing scroll animations the page scripts create.
+      let _ownTriggers: ScrollTrigger[] = [];
+
+      function setNavbarTheme(theme: string) {
+        const nav = document.getElementById('navbar');
+        if (!nav) return;
+        nav.classList.remove('nav-dark', 'nav-light');
+        nav.classList.add(theme === 'dark' ? 'nav-dark' : 'nav-light');
+      }
+
+      function initThemeTriggers() {
+        const sections = document.querySelectorAll<HTMLElement>('[data-color]');
+        if (!sections.length) return;
+
+        sections.forEach((section) => {
+          const theme = section.getAttribute('data-color')!;
+
+          _ownTriggers.push(ScrollTrigger.create({
+            trigger: section,
+            start: 'top center',
+            end: 'bottom center',
+            onEnter:     () => { document.body.setAttribute('data-theme', theme); },
+            onEnterBack: () => { document.body.setAttribute('data-theme', theme); },
+          }));
+
+          _ownTriggers.push(ScrollTrigger.create({
+            trigger: section,
+            start: 'top 80px',
+            end: 'bottom 80px',
+            onEnter:     () => { setNavbarTheme(theme); },
+            onEnterBack: () => { setNavbarTheme(theme); },
+          }));
+        });
+      }
+
+      function initApp() {
+        // ── Teardown previous instances ────────────────────────────────
+        if (_lenis) { _lenis.destroy(); _lenis = null; }
+        if (_rafCallback) { gsap.ticker.remove(_rafCallback); _rafCallback = null; }
+
+        // Kill ONLY the triggers initApp owns — never the page's animation triggers.
+        // (On first load, page scripts run before initApp, so their triggers must survive.)
+        _ownTriggers.forEach((st) => st.kill());
+        _ownTriggers = [];
+
+        // ── Reset navbar inline styles from previous scrub ────────────
+        const navbar = document.getElementById('navbar');
+        if (navbar) {
+          navbar.removeAttribute('style');
+          navbar.classList.remove('scrolled');
+        }
+
+        // ── Apply initial navbar theme immediately (no flash) ──────────
+        const initialTheme = document.body.getAttribute('data-theme') || 'dark';
+        setNavbarTheme(initialTheme);
+
+        // ── Lenis smooth scroll ────────────────────────────────────────
+        const lenis = new Lenis({
+          duration: 1.2,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothTouch: false,
+        });
+
+        _lenis      = lenis;
+        window.lenis = lenis as any;
+
+        lenis.on('scroll', ScrollTrigger.update);
+        _rafCallback = (time: number) => { lenis.raf(time * 1000); };
+        gsap.ticker.add(_rafCallback);
+        gsap.ticker.lagSmoothing(0, 0);
+
+        // ── Scroll-based theme switching ───────────────────────────────
+        initThemeTriggers();
+
+        // ── Scrubbed navbar — geometry tracks scroll proportionally ────
+        // scrub: 0.8 means the animation lags 0.8 s behind scroll speed.
+        // Both up and down feel identical because the animation is tied
+        // to position, not fired as a binary CSS class toggle.
+        if (navbar) {
+          _ownTriggers.push(ScrollTrigger.create({
+            start: 0,
+            end: 280,
+            scrub: 0.8,
+            onUpdate(self) {
+              const p = self.progress;
+
+              // Geometry
+              navbar.style.width         = `${100 - 10 * p}%`;
+              navbar.style.borderRadius  = `${9999 * p}px`;
+              navbar.style.top           = `${20 * p}px`;
+              navbar.style.paddingTop    = `${24 - 12 * p}px`;
+              navbar.style.paddingBottom = `${24 - 12 * p}px`;
+              navbar.style.paddingLeft   = `${24 + 8  * p}px`;
+              navbar.style.paddingRight  = `${24 + 8  * p}px`;
+
+              // Background: fades in from transparent → white
+              const alpha = Math.min(p * 1.4, 0.98);
+              navbar.style.backgroundColor = `rgba(255,255,255,${alpha})`;
+              navbar.style.borderColor     = `rgba(255,255,255,${Math.min(p * 1.4, 0.8)})`;
+              navbar.style.boxShadow       = p > 0.05
+                ? `0 10px 40px -10px rgba(0,0,0,${0.15 * p})`
+                : 'none';
+
+              // Colour classes flip at 70 % progress (navbar is clearly a pill by then)
+              navbar.classList.toggle('scrolled', p > 0.7);
+            },
+          }));
+        }
+      }
+
+      document.addEventListener('astro:page-load', initApp);
+    </script>
+  </body>
+</html>

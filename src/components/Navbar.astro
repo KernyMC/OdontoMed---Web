@@ -1,0 +1,51 @@
+---
+/**
+ * Navbar.astro
+ * Barra de navegación fija con efecto pill al hacer scroll.
+ * Usa enlaces reales de Astro — sin JavaScript de routing manual.
+ */
+const currentPath = Astro.url.pathname;
+
+// Ayuda a marcar el enlace activo
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<nav id="navbar" class="text-[var(--text-color)] gsap-nav" transition:persist>
+  <div class="flex justify-between items-center w-full max-w-[1800px] mx-auto">
+
+    <!-- Logo -->
+    <div class="flex-shrink-0">
+      <a href="/" class="block group" aria-label="Odontomed — Ir al inicio">
+        <img
+          src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=375,h=236,fit=crop/YrDQXj4Jr9UWZDOn/logo-horizontal---impresion-AVLBNkzOnBCxe5Dz.png"
+          alt="Logo Odontomed"
+          class="h-8 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 theme-logo"
+          width="220" height="56"
+          loading="eager"
+        />
+      </a>
+    </div>
+
+    <!-- Links + CTA -->
+    <div class="flex items-center space-x-6 md:space-x-8">
+
+      <div class="hidden lg:flex space-x-8 items-center">
+        <a href="/"           class={`nav-link ${isActive('/')         ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Inicio</a>
+        <a href="/nosotros"   class={`nav-link ${isActive('/nosotros') ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Nosotros</a>
+        <a href="/servicios"  class={`nav-link ${isActive('/servicios')? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Servicios</a>
+        <a href="/blog"       class={`nav-link ${isActive('/blog')     ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Blog</a>
+      </div>
+
+      <a
+        href="/contacto"
+        class="nav-cta px-6 py-3 text-[10px] md:text-xs uppercase tracking-widest font-bold border whitespace-nowrap transition-colors duration-300"
+      >
+        Reservar Cita
+      </a>
+
+    </div>
+  </div>
+</nav>
