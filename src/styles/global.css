@@ -84,6 +84,12 @@ small { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 14px; }
   -webkit-text-stroke: 1px var(--text-color);
 }
 
+/* Hero-specific outline — always white stroke regardless of theme */
+.hero-outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.55);
+}
+
 /* ─────────────────────────────────────────────────────────────────
    NAVBAR
 ───────────────────────────────────────────────────────────────── */
@@ -190,6 +196,48 @@ body[data-theme="dark"] .theme-logo { filter: brightness(0) invert(1); }
 @media (max-width: 768px) {
   #navbar         { padding: 1.5rem 1rem; }
 }
+
+/* ── Mobile menu overlay ─────────────────────────────────────────── */
+#nav-mobile {
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  pointer-events: none;
+}
+#nav-mobile.is-open {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* ── Hamburger → X morph ─────────────────────────────────────────── */
+#nav-toggle.is-open .hamburger-bar:nth-child(1) {
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+#nav-toggle.is-open .hamburger-bar:nth-child(2) {
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+}
+#nav-toggle.is-open .hamburger-bar:nth-child(3) {
+  bottom: 50%;
+  right: 0;
+  width: 100%;
+  transform: translateY(50%) rotate(-45deg);
+}
+
+/* ── Mobile nav links — stagger fade in when menu opens ─────────── */
+.mobile-nav-link {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity  0.4s ease,
+    transform 0.4s ease,
+    color     0.2s ease;
+}
+#nav-mobile.is-open .mobile-nav-link:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+#nav-mobile.is-open .mobile-nav-link:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.22s; }
+#nav-mobile.is-open .mobile-nav-link:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.29s; }
+#nav-mobile.is-open .mobile-nav-link:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.36s; }
+.mobile-nav-link:hover { color: #CADDDE; }
 
 /* ─────────────────────────────────────────────────────────────────
    ARTICLE / BLOG

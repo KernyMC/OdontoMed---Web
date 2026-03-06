@@ -1,18 +1,13 @@
 ---
-/**
- * Navbar.astro
- * Barra de navegación fija con efecto pill al hacer scroll.
- * Usa enlaces reales de Astro — sin JavaScript de routing manual.
- */
 const currentPath = Astro.url.pathname;
 
-// Ayuda a marcar el enlace activo
 function isActive(href: string) {
   if (href === '/') return currentPath === '/';
   return currentPath.startsWith(href);
 }
 ---
 
+<!-- ── Fixed bar ─────────────────────────────────────────────────── -->
 <nav id="navbar" class="text-[var(--text-color)] gsap-nav" transition:persist>
   <div class="flex justify-between items-center w-full max-w-[1800px] mx-auto">
 
@@ -22,30 +17,119 @@ function isActive(href: string) {
         <img
           src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=375,h=236,fit=crop/YrDQXj4Jr9UWZDOn/logo-horizontal---impresion-AVLBNkzOnBCxe5Dz.png"
           alt="Logo Odontomed"
-          class="h-8 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 theme-logo"
+          class="h-7 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105 theme-logo"
           width="220" height="56"
           loading="eager"
         />
       </a>
     </div>
 
-    <!-- Links + CTA -->
-    <div class="flex items-center space-x-6 md:space-x-8">
+    <!-- Desktop links + CTA  +  Mobile hamburger -->
+    <div class="flex items-center gap-4 lg:gap-8">
 
-      <div class="hidden lg:flex space-x-8 items-center">
-        <a href="/"           class={`nav-link ${isActive('/')         ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Inicio</a>
-        <a href="/nosotros"   class={`nav-link ${isActive('/nosotros') ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Nosotros</a>
-        <a href="/servicios"  class={`nav-link ${isActive('/servicios')? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Servicios</a>
-        <a href="/blog"       class={`nav-link ${isActive('/blog')     ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Blog</a>
+      <!-- Desktop links — hidden below lg -->
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="/"          class={`nav-link ${isActive('/')          ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Inicio</a>
+        <a href="/nosotros"  class={`nav-link ${isActive('/nosotros')  ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Nosotros</a>
+        <a href="/servicios" class={`nav-link ${isActive('/servicios') ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Servicios</a>
+        <a href="/blog"      class={`nav-link ${isActive('/blog')      ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Blog</a>
       </div>
 
+      <!-- CTA — desktop only -->
       <a
         href="/contacto"
-        class="nav-cta px-6 py-3 text-[10px] md:text-xs uppercase tracking-widest font-bold border whitespace-nowrap transition-colors duration-300"
+        class="nav-cta hidden lg:inline-flex items-center px-6 py-3 text-xs uppercase tracking-widest font-bold border whitespace-nowrap transition-colors duration-300"
       >
         Reservar Cita
       </a>
 
+      <!-- Hamburger — mobile / tablet only -->
+      <button
+        id="nav-toggle"
+        class="lg:hidden relative z-[60] w-7 h-5 flex-shrink-0"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+        aria-controls="nav-mobile"
+      >
+        <span class="hamburger-bar absolute top-0    left-0 w-full  h-px bg-current transition-all duration-300 origin-center"></span>
+        <span class="hamburger-bar absolute top-1/2  left-0 w-full  h-px bg-current transition-all duration-300 -translate-y-1/2"></span>
+        <span class="hamburger-bar absolute bottom-0 right-0 w-2/3  h-px bg-current transition-all duration-300 origin-center"></span>
+      </button>
+
     </div>
   </div>
 </nav>
+
+<!-- ── Mobile full-screen menu ──────────────────────────────────── -->
+<div
+  id="nav-mobile"
+  class="fixed inset-0 z-50 lg:hidden bg-brand-teal flex flex-col justify-between px-8 pt-8 pb-12"
+  aria-hidden="true"
+>
+  <!-- Top row: logo + close (the hamburger above becomes the close) -->
+  <div class="flex justify-between items-center">
+    <a href="/" class="block" aria-label="Inicio">
+      <img
+        src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=375,h=236,fit=crop/YrDQXj4Jr9UWZDOn/logo-horizontal---impresion-AVLBNkzOnBCxe5Dz.png"
+        alt="Logo Odontomed"
+        class="h-7 w-auto object-contain brightness-0 invert"
+        width="220" height="56"
+        loading="eager"
+      />
+    </a>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="flex flex-col gap-4" aria-label="Menú principal">
+    <a href="/"          class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Inicio</a>
+    <a href="/nosotros"  class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Nosotros</a>
+    <a href="/servicios" class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Servicios</a>
+    <a href="/blog"      class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Blog</a>
+  </nav>
+
+  <!-- Bottom: CTA + info -->
+  <div class="flex flex-col gap-5">
+    <a
+      href="/contacto"
+      class="block w-full bg-brand-accent text-white py-4 text-sm uppercase tracking-widest font-bold text-center hover:bg-white hover:text-brand-teal transition-colors duration-300"
+    >
+      Reservar Cita
+    </a>
+    <div class="flex justify-between text-white/50 font-sans text-[0.65rem] uppercase tracking-widest">
+      <a href="tel:0979286633" class="hover:text-white transition-colors">097 928 6633</a>
+      <span>Conocoto, Quito</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('nav-toggle')!;
+  const menu   = document.getElementById('nav-mobile')!;
+  let isOpen   = false;
+
+  function openMenu() {
+    isOpen = true;
+    menu.classList.add('is-open');
+    menu.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    isOpen = false;
+    menu.classList.remove('is-open');
+    menu.setAttribute('aria-hidden', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', () => (isOpen ? closeMenu() : openMenu()));
+
+  // Close when any menu link is clicked
+  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+
+  // Close before Astro swaps the page (View Transitions)
+  document.addEventListener('astro:before-swap', closeMenu);
+</script>
