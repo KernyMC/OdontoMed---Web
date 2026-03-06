@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Temporary block while the site is not ready for indexing.
