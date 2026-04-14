@@ -6,18 +6,84 @@ import ServiceCard from '../components/ui/ServiceCard.astro';
 import { services } from '../data/services';
 
 const featuredServices = services.slice(0, 4);
+
+const schemaData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["MedicalOrganization", "LocalBusiness"],
+      "@id": "https://odonto-med.com/#organization",
+      "name": "Odontomed",
+      "legalName": "ODONTOMED S.A.S",
+      "description": "Clínica de especialidades odontológicas comprometida con la salud oral integral desde 1976. Atención de calidad con calidez para toda la familia en el Valle de los Chillos.",
+      "url": "https://odonto-med.com",
+      "telephone": "+593979286633",
+      "foundingDate": "1976",
+      "medicalSpecialty": [
+        "Dentistry",
+        "Orthodontics",
+        "PediatricDentistry",
+        "Endodontics"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Jaime Roldos Aguilera",
+        "addressLocality": "Conocoto",
+        "addressRegion": "Pichincha",
+        "addressCountry": "EC"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -0.3063063,
+        "longitude": -78.4876081
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "08:30",
+          "closes": "19:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "08:30",
+          "closes": "15:00"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "90",
+        "bestRating": "5"
+      },
+      "sameAs": [
+        "https://www.google.com/maps/place/ODONTOMED+S.A.S/@-0.3063063,-78.4876081,15z"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://odonto-med.com/#website",
+      "url": "https://odonto-med.com",
+      "name": "Odontomed",
+      "inLanguage": "es-EC",
+      "publisher": { "@id": "https://odonto-med.com/#organization" }
+    }
+  ]
+});
 ---
 
 <BaseLayout
-  title="Odontomed | Clínica Dental en Conocoto, Valle de los Chillos"
-  description="Clínica dental en Conocoto, Quito. Ortodoncia, implantes, carillas, endodoncia y medicina general. Tecnología de punta y atención personalizada para toda la familia."
+  title="Odontomed | Dentista en Conocoto — Clínica Dental y Médica Valle de los Chillos"
+  description="Dentista en Conocoto y médico en el Valle de los Chillos desde 1976. Odontomed: ortodoncia, implantes, carillas, endodoncia y medicina integral sin dolor para toda la familia en Quito."
   bodyTheme="dark"
+  schema={schemaData}
 >
   <Navbar />
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
   <section
-    class="relative min-h-screen flex flex-col justify-center items-center px-4 pt-32 pb-16"
+    class="relative min-h-screen flex flex-col justify-center items-center px-4 pt-24 sm:pt-32 pb-12 sm:pb-16 overflow-hidden"
     data-color="dark"
   >
     <div class="absolute inset-0 z-0 overflow-hidden bg-brand-teal">
@@ -29,19 +95,19 @@ const featuredServices = services.slice(0, 4);
     </div>
 
     <div class="max-w-[1200px] w-full relative z-10 text-white mt-12 text-center flex flex-col items-center gsap-hero-content">
-      <h2 class="gsap-hero-el font-sans text-[10px] md:text-xs tracking-[0.35em] uppercase mb-4 text-white/30 font-semibold flex items-center gap-4">
-        <span class="w-8 h-px bg-white/20"></span>
-        Centro Odontológico Integral
-        <span class="w-8 h-px bg-white/20"></span>
+      <h2 class="gsap-hero-el font-sans text-[10px] md:text-xs tracking-[0.15em] md:tracking-[0.35em] uppercase mb-4 text-white/30 font-semibold flex items-center gap-2 md:gap-4">
+        <span class="hidden sm:inline-block w-8 h-px bg-white/20"></span>
+        Dentista en Conocoto · Desde 1976
+        <span class="hidden sm:inline-block w-8 h-px bg-white/20"></span>
       </h2>
-      <h1 class="font-serif text-[4rem] sm:text-[5.5rem] lg:text-[7rem] leading-[0.9] tracking-tighter mb-6 drop-shadow-lg max-w-5xl mx-auto">
+      <h1 class="font-serif text-[2.5rem] sm:text-[4.5rem] lg:text-[7rem] leading-[0.9] tracking-tighter mb-6 drop-shadow-lg max-w-full px-2 mx-auto">
         <div class="overflow-hidden"><span class="gsap-hero-title inline-block">Especialistas en</span></div>
-        <div class="overflow-hidden"><span class="gsap-hero-title inline-block text-[3rem] sm:text-[4.5rem] lg:text-[6rem] mt-2 italic text-white/90">Odontología</span></div>
-        <div class="overflow-hidden"><span class="gsap-hero-title inline-block text-[2rem] sm:text-[3rem] lg:text-[4rem] mt-1 hero-outline-text">en el Valle de los Chillos</span></div>
+        <div class="overflow-hidden"><span class="gsap-hero-title inline-block text-[2rem] sm:text-[3.8rem] lg:text-[6rem] mt-2 italic text-white/90">Odontología</span></div>
+        <div class="overflow-hidden"><span class="gsap-hero-title inline-block text-[1.1rem] sm:text-[2.5rem] lg:text-[4rem] mt-1 hero-outline-text tracking-tight sm:tracking-tighter">en el Valle de los Chillos</span></div>
       </h1>
       <div class="overflow-hidden mb-10 max-w-2xl mx-auto">
         <p class="gsap-hero-el font-sans text-lg md:text-xl font-light leading-relaxed drop-shadow-md text-white/80">
-          Atención dental sin dolor, estética avanzada y tecnología de punta. Recupera tu confianza con nuestro equipo de expertos en Conocoto.
+          Ortodoncia, implantes, carillas y medicina integral en Conocoto. Diseño de sonrisa digital, atención sin dolor y especialistas para toda la familia en el Valle de los Chillos.
         </p>
       </div>
       <div class="gsap-hero-el flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -67,39 +133,38 @@ const featuredServices = services.slice(0, 4);
   <section class="py-10 border-y border-[var(--text-color)] overflow-hidden" data-color="dark">
     <div class="whitespace-nowrap flex items-center">
       <div class="gsap-marquee font-serif text-[2.5rem] md:text-[4rem] leading-none uppercase tracking-tight whitespace-nowrap">
-        &nbsp;ESTÉTICA DENTAL • IMPLANTES • ORTODONCIA • ODONTOPEDIATRÍA • ENDODONCIA •&nbsp;
+        &nbsp;ESTÉTICA DENTAL • IMPLANTES • ORTODONCIA • ODONTOPEDIATRÍA • ENDODONCIA • MEDICINA INTEGRAL • DISEÑO DE SONRISA •&nbsp;
       </div>
       <div class="gsap-marquee font-serif text-[2.5rem] md:text-[4rem] leading-none uppercase tracking-tight whitespace-nowrap" aria-hidden="true">
-        &nbsp;ESTÉTICA DENTAL • IMPLANTES • ORTODONCIA • ODONTOPEDIATRÍA • ENDODONCIA •&nbsp;
+        &nbsp;ESTÉTICA DENTAL • IMPLANTES • ORTODONCIA • ODONTOPEDIATRÍA • ENDODONCIA • MEDICINA INTEGRAL • DISEÑO DE SONRISA •&nbsp;
       </div>
     </div>
   </section>
 
   <!-- ── Team Preview ────────────────────────────────────────────── -->
-  <section class="py-32 px-6 lg:px-12" data-color="light">
-    <div class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-      <div class="h-[70vh] w-full overflow-hidden relative">
+  <section class="py-16 md:py-32 px-6 lg:px-12" data-color="light">
+    <div class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <div class="h-[50vh] md:h-[70vh] w-full overflow-hidden relative">
         <div class="absolute inset-0 bg-brand-teal w-full h-full transform translate-x-4 translate-y-4"></div>
         <img
           src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=2068&auto=format&fit=crop"
-          alt="Equipo de odontólogos Odontomed en Conocoto, Quito"
+          alt="Especialistas de Odontomed — clínica dental y médica en Conocoto, Valle de los Chillos, Quito"
           class="w-full h-full object-cover relative z-10 grayscale contrast-125 gsap-home-team-img"
           loading="lazy" width="800" height="1000"
         />
       </div>
       <div class="px-0 md:px-12">
         <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent gsap-home-team-text">El Equipo</span>
-        <h2 class="font-serif text-[3.5rem] md:text-[5rem] leading-[0.9] mb-8 gsap-home-team-text">
+        <h2 class="font-serif text-[2.2rem] sm:text-[3rem] md:text-[5rem] leading-[0.9] mb-8 gsap-home-team-text">
           Conoce a tu <br /><span class="italic text-outline">odontólogo</span><br />en el Valle de los Chillos.
         </h2>
         <p class="font-sans text-lg leading-relaxed mb-8 max-w-lg gsap-home-team-text">
-          En Odontomed cuentas con un equipo de especialistas con años de experiencia en Quito y el Valle
-          de los Chillos. Diagnósticos honestos, planes personalizados y acompañamiento cercano en cada etapa.
+          Desde 1976, somos la clínica en Conocoto que une odontología especializada y medicina integral bajo un mismo techo. Diagnósticos honestos, tecnología de diseño de sonrisa digital y acompañamiento cercano en cada etapa.
         </p>
         <ul class="font-sans text-sm uppercase tracking-widest space-y-4 mb-12 gsap-home-team-text">
-          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Tratamientos para adultos y niños.</li>
-          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Todas las especialidades en un solo lugar.</li>
-          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Clínica moderna en Conocoto.</li>
+          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Dentista en Conocoto sin dolor, para adultos y niños.</li>
+          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Odontología y medicina integral: ortodoncia, implantes, pediatría y más.</li>
+          <li class="flex items-center gap-3"><span class="w-8 h-[1px] bg-brand-accent"></span> Tecnología de diseño de sonrisa digital en el Valle de los Chillos.</li>
         </ul>
         <div class="gsap-home-team-text">
           <a href="/nosotros" class="border-b border-[var(--text-color)] pb-2 font-sans text-sm uppercase tracking-widest hover:text-brand-accent transition-colors">
@@ -111,12 +176,12 @@ const featuredServices = services.slice(0, 4);
   </section>
 
   <!-- ── Services Carousel ──────────────────────────────────────── -->
-  <section class="py-32 px-6 lg:px-12 bg-brand-teal text-white" data-color="dark">
+  <section class="py-16 md:py-32 px-6 lg:px-12 bg-brand-teal text-white" data-color="dark">
     <div class="max-w-[1600px] mx-auto">
-      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-10 md:mb-16 gap-6 md:gap-8">
         <div>
           <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-light gsap-services-el">Nuestras Especialidades</span>
-          <h2 class="font-serif text-[4rem] md:text-[6rem] leading-[0.9] tracking-tighter gsap-services-el">
+          <h2 class="font-serif text-[2.5rem] sm:text-[3.5rem] md:text-[6rem] leading-[0.9] tracking-tighter gsap-services-el">
             Lo que <br /><span class="italic text-white/80">hacemos.</span>
           </h2>
         </div>
@@ -133,11 +198,105 @@ const featuredServices = services.slice(0, 4);
     </div>
   </section>
 
+  <!-- ── Tecnología & Diagnóstico ─────────────────────────────────── -->
+  <section class="py-16 md:py-32 px-6 lg:px-12 bg-white" data-color="light">
+    <div class="max-w-[1600px] mx-auto">
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-20 gap-6">
+        <div>
+          <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent gsap-tech-home-el">
+            Equipamiento & Diagnóstico
+          </span>
+          <h2 class="font-serif text-[2.5rem] sm:text-[3.5rem] md:text-[6rem] leading-[0.9] tracking-tighter text-brand-teal gsap-tech-home-el">
+            Diagnóstico<br /><span class="italic" style="-webkit-text-stroke: 1px #448087; color: transparent;">de precisión.</span>
+          </h2>
+        </div>
+        <a
+          href="/tecnologia"
+          class="font-sans text-sm uppercase tracking-widest border-b border-brand-teal/40 pb-2 hover:border-brand-teal hover:text-brand-accent transition-all gsap-tech-home-el shrink-0 text-brand-teal"
+        >
+          Ver toda la tecnología →
+        </a>
+      </div>
+
+      <!-- 4 group cards — gap-px + colored container = hairline separators -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-brand-teal/10 border border-brand-teal/10">
+
+        <!-- Radiografías -->
+        <a href="/tecnologia#tech-rx" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
+          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
+              <rect x="3" y="3" width="26" height="26" rx="1.5"/>
+              <line x1="16" y1="3"  x2="16" y2="29"/>
+              <line x1="3"  y1="16" x2="29" y2="16"/>
+              <line x1="9"  y1="9"  x2="23" y2="23"/>
+              <line x1="23" y1="9"  x2="9"  y2="23"/>
+            </svg>
+          </div>
+          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">7 estudios</p>
+          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Radiografías</h3>
+          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Imágenes de alta definición para dientes, hueso y estructuras craneofaciales.</p>
+          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver estudios <span aria-hidden="true">→</span></span>
+        </a>
+
+        <!-- Tomografías -->
+        <a href="/tecnologia#tech-tomo" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
+          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" class="w-full h-full" aria-hidden="true">
+              <circle cx="16" cy="16" r="13"/>
+              <circle cx="16" cy="16" r="7"/>
+              <circle cx="16" cy="16" r="2.5"/>
+              <line x1="3"  y1="16" x2="9"  y2="16"/>
+              <line x1="23" y1="16" x2="29" y2="16"/>
+            </svg>
+          </div>
+          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">3 estudios</p>
+          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Tomografías</h3>
+          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Reconstrucción 3D de estructuras óseas para implantología y planificación quirúrgica.</p>
+          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver estudios <span aria-hidden="true">→</span></span>
+        </a>
+
+        <!-- Digital -->
+        <a href="/tecnologia#tech-digital" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
+          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
+              <path d="M6 11V7a1 1 0 0 1 1-1h4"/>
+              <path d="M6 21v4a1 1 0 0 0 1 1h4"/>
+              <path d="M26 11V7a1 1 0 0 0-1-1h-4"/>
+              <path d="M26 21v4a1 1 0 0 1-1 1h-4"/>
+              <line x1="6" y1="16" x2="26" y2="16"/>
+              <circle cx="16" cy="16" r="3.5"/>
+            </svg>
+          </div>
+          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">3 equipos</p>
+          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Tecnología Digital</h3>
+          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Scáner facial, scáner intraoral y diseño CAD/CAM para prótesis y sonrisa digital.</p>
+          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver equipos <span aria-hidden="true">→</span></span>
+        </a>
+
+        <!-- Laboratorio -->
+        <a href="/tecnologia#tech-lab" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
+          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
+              <polyline points="2,16 7,16 10,8 13,24 16,16 19,16 21,20 24,11 27,16 30,16"/>
+            </svg>
+          </div>
+          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">2 servicios</p>
+          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Lab. & Cardiología</h3>
+          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Laboratorio clínico y electrocardiógrafo: diagnóstico médico completo en un solo lugar.</p>
+          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver servicios <span aria-hidden="true">→</span></span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ── Reviews / Testimonials ──────────────────────────────────── -->
-  <section class="py-32 px-6 lg:px-12 bg-brand-soft" data-color="soft">
+  <section class="py-16 md:py-32 px-6 lg:px-12 bg-brand-soft" data-color="soft">
     <div class="max-w-[1600px] mx-auto">
       <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-8 text-brand-accent gsap-reviews-el">Testimonios</span>
-      <h2 class="font-serif text-[4rem] md:text-[6rem] leading-[0.9] tracking-tighter mb-20 text-brand-teal gsap-reviews-el">
+      <h2 class="font-serif text-[2.5rem] sm:text-[3.5rem] md:text-[6rem] leading-[0.9] tracking-tighter mb-10 md:mb-20 text-brand-teal gsap-reviews-el">
         Lo que dicen<br /><span class="italic">nuestros pacientes.</span>
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -182,16 +341,16 @@ const featuredServices = services.slice(0, 4);
   </section>
 
   <!-- ── Map / Location ─────────────────────────────────────────── -->
-  <section class="py-32 px-6 lg:px-12 border-t border-[var(--text-color)] bg-brand-teal text-white" data-color="dark">
-    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
+  <section class="py-16 md:py-32 px-6 lg:px-12 border-t border-[var(--text-color)] bg-brand-teal text-white" data-color="dark">
+    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
       <div class="w-full lg:w-1/3">
         <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-white/60 gsap-map-el">Encuéntranos</span>
-        <h2 class="font-serif text-[4rem] md:text-[5rem] leading-[0.9] mb-8 gsap-map-el">
+        <h2 class="font-serif text-[2.5rem] sm:text-[3.5rem] md:text-[5rem] leading-[0.9] mb-8 gsap-map-el">
           Nuestra <br /><span class="italic" style="-webkit-text-stroke: 1px white; color: transparent;">Ubicación.</span>
         </h2>
         <div class="bg-white border border-white/20 p-8 rounded-2xl gsap-map-el transition-colors duration-500">
           <h3 class="font-serif text-3xl text-brand-teal mb-2">ODONTOMED S.A.S</h3>
-          <p class="font-sans text-sm text-brand-teal/60 mb-6">Clínica odontológica en Quito</p>
+          <p class="font-sans text-sm text-brand-teal/60 mb-6">Clínica dental en Conocoto, Quito — desde 1976</p>
           <ul class="space-y-5 font-sans text-sm text-brand-teal/80 mb-8">
             <li class="flex items-start gap-4">
               <svg class="w-5 h-5 text-brand-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -274,6 +433,15 @@ const featuredServices = services.slice(0, 4);
     gsap.fromTo('.gsap-services-grid .gsap-service-item', { y: 60, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
       scrollTrigger: { trigger: '.gsap-services-grid', start: 'top 80%' },
+    });
+
+    gsap.fromTo('.gsap-tech-home-el', { y: 40, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 85%' },
+    });
+    gsap.fromTo('.gsap-tech-home-card', { y: 40, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 80%' },
     });
 
     gsap.fromTo('.gsap-reviews-el', { y: 40, opacity: 0 }, {
