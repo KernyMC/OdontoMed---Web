@@ -1,10 +1,13 @@
-import {defineField, defineType} from 'sanity'
+import {defineField, defineType, defineArrayMember} from 'sanity'
+import {HeartIcon} from '@sanity/icons'
 
 export default defineType({
   name: 'service',
   title: 'Servicio',
   type: 'document',
+  icon: HeartIcon,
   fields: [
+    // ── Identificación ──────────────────────────────────────
     defineField({
       name: 'title',
       title: 'Título',
@@ -13,7 +16,7 @@ export default defineType({
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'Slug (URL)',
       type: 'slug',
       options: {source: 'title', maxLength: 96},
       validation: (Rule) => Rule.required(),
@@ -22,6 +25,7 @@ export default defineType({
       name: 'category',
       title: 'Categoría',
       type: 'string',
+      description: 'Ej: Odontología Estética, Implantología, Medicina Infantil…',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -37,41 +41,95 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'image',
-      title: 'Imagen principal',
-      type: 'image',
-      options: {hotspot: true},
-    }),
+
+    // ── Descripción corta (card + hero) ─────────────────────
     defineField({
       name: 'desc',
       title: 'Descripción corta',
       type: 'text',
       rows: 3,
-      validation: (Rule) => Rule.required(),
+      description: 'Se muestra en la tarjeta y en el hero de la página de detalle.',
+      validation: (Rule) => Rule.required().max(200),
+    }),
+
+    // ── Imagen ───────────────────────────────────────────────
+    defineField({
+      name: 'image',
+      title: 'Imagen principal',
+      type: 'image',
+      options: {hotspot: true},
+      description: 'Imagen subida al Media Manager (recomendado).',
     }),
     defineField({
+      name: 'externalImageUrl',
+      title: 'URL externa de imagen (fallback)',
+      type: 'url',
+      description: 'Usar solo si aún no hay imagen subida. Se ignora cuando existe "Imagen principal".',
+    }),
+
+    // ── Contenido del procedimiento ──────────────────────────
+    defineField({
       name: 'body',
-      title: 'Contenido',
+      title: 'Descripción del procedimiento',
       type: 'array',
+      description: 'Texto principal que aparece en la sección "Sobre el Procedimiento".',
       of: [
-        {type: 'block'},
-        {
+        defineArrayMember({type: 'block'}),
+        defineArrayMember({
           type: 'image',
           options: {hotspot: true},
           fields: [
             defineField({name: 'alt', type: 'string', title: 'Texto alternativo'}),
           ],
-        },
+        }),
       ],
     }),
     defineField({
+      name: 'whyUs',
+      title: '¿Por qué elegirnos?',
+      type: 'text',
+      rows: 3,
+      description: 'Párrafo que aparece en el recuadro destacado de la página de detalle.',
+    }),
+
+    // ── Beneficios clave (sidebar) ───────────────────────────
+    defineField({
+      name: 'benefits',
+      title: 'Beneficios clave',
+      type: 'array',
+      description: 'Aparece en el sidebar de la página de detalle. Agrega hasta 6 ítems.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          preview: {select: {title: 'title', subtitle: 'description'}},
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Título del beneficio',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Descripción',
+              type: 'text',
+              rows: 2,
+            }),
+          ],
+        }),
+      ],
+      validation: (Rule) => Rule.max(6),
+    }),
+
+    // ── Orden ────────────────────────────────────────────────
+    defineField({
       name: 'order',
-      title: 'Orden',
+      title: 'Orden de aparición',
       type: 'number',
-      description: 'Número para ordenar los servicios (menor = primero)',
+      description: 'Menor número = aparece primero. Deja vacío para orden automático.',
     }),
   ],
+
   preview: {
     select: {title: 'title', subtitle: 'category', media: 'image'},
   },

@@ -3,10 +3,11 @@ import BaseLayout  from '../../layouts/BaseLayout.astro';
 import Navbar      from '../../components/Navbar.astro';
 import Footer      from '../../components/Footer.astro';
 import ServiceCard from '../../components/ui/ServiceCard.astro';
-import { services } from '../../data/services';
+import { getServices } from '../../utils/services';
 
-const odontologia = services.filter((s) => s.group === 'odontologia');
-const medicina    = services.filter((s) => s.group === 'medicina');
+const allServices = await getServices();
+const odontologia = allServices.filter((s) => s.group === 'odontologia');
+const medicina    = allServices.filter((s) => s.group === 'medicina');
 ---
 
 <BaseLayout
@@ -41,7 +42,9 @@ const medicina    = services.filter((s) => s.group === 'medicina');
             <span class="font-sans text-sm md:text-lg tracking-[0.4em] font-bold text-brand-accent uppercase pl-1 mt-4">Logía</span>
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {odontologia.map((s) => <ServiceCard {...s} />)}
+            {odontologia.map((s) => (
+              <ServiceCard slug={s.slug} title={s.title} imgSrc={s.imgUrl} desc={s.desc} />
+            ))}
           </div>
         </div>
 
@@ -52,7 +55,9 @@ const medicina    = services.filter((s) => s.group === 'medicina');
             <span class="font-sans text-sm md:text-lg tracking-[0.4em] font-bold text-brand-accent uppercase pl-1 mt-4">icina</span>
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {medicina.map((s) => <ServiceCard {...s} />)}
+            {medicina.map((s) => (
+              <ServiceCard slug={s.slug} title={s.title} imgSrc={s.imgUrl} desc={s.desc} />
+            ))}
           </div>
         </div>
 

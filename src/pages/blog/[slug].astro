@@ -1,29 +1,38 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navbar     from '../../components/Navbar.astro';
-import Footer     from '../../components/Footer.astro';
-import { articles } from '../../data/articles';
+import BaseLayout    from '../../layouts/BaseLayout.astro';
+import Navbar        from '../../components/Navbar.astro';
+import Footer        from '../../components/Footer.astro';
+import {
+  getPost,
+  urlFor,
+  formatDate,
+  portableTextToHtml,
+  extractToc,
+} from '../../utils/sanity';
 
-export const prerender = true;
+const { slug } = Astro.params;
+const post = await getPost(slug!);
 
-export function getStaticPaths() {
-  return articles.map((article) => ({
-    params: { slug: article.slug },
-    props:  { article },
-  }));
+if (!post) {
+  return Astro.redirect('/blog');
 }
 
-const { article } = Astro.props;
+const toc      = extractToc(post.body ?? []);
+const bodyHtml = portableTextToHtml(post.body ?? []);
+const dateStr  = formatDate(post.publishedAt);
+const heroUrl  = post.image
+  ? urlFor(post.image).width(1600).height(750).fit('crop').auto('format').url()
+  : null;
 
 const articleSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": article.title,
-  "description": article.excerpt,
-  "image": article.imgSrc,
-  "datePublished": article.date,
+  "headline": post.title,
+  "description": post.excerpt,
+  "image": heroUrl,
+  "datePublished": post.publishedAt,
   "inLanguage": "es-EC",
-  "url": `https://odonto-med.com/blog/${article.slug}`,
+  "url": `https://odonto-med.com/blog/${post.slug}`,
   "author": {
     "@type": "Person",
     "name": "Dra. Julienne Hong",
@@ -39,15 +48,15 @@ const articleSchema = JSON.stringify({
     "name": "Odontomed",
     "url": "https://odonto-med.com"
   },
-  "articleSection": article.category,
-  "keywords": `odontología, ${article.category.toLowerCase()}, salud dental, Conocoto, Quito, Valle de los Chillos`
+  "articleSection": post.category,
+  "keywords": `odontología, ${post.category?.toLowerCase()}, salud dental, Conocoto, Quito, Valle de los Chillos`
 });
 ---
 
 <BaseLayout
-  title={`${article.title} | Blog Odontomed`}
-  description={article.excerpt}
-  ogImage={article.imgSrc}
+  title={`${post.title} | Blog Odontomed`}
+  description={post.excerpt}
+  ogImage={heroUrl ?? undefined}
   bodyTheme="light"
   schema={articleSchema}
 >
@@ -63,99 +72,77 @@ const articleSchema = JSON.stringify({
           <span class="mx-2" aria-hidden="true">/</span>
           <a href="/blog" class="hover:text-brand-accent transition-colors">Blog</a>
           <span class="mx-2" aria-hidden="true">/</span>
-          <span class="text-brand-accent font-bold">{article.category}</span>
+          <span class="text-brand-accent font-bold">{post.category}</span>
         </nav>
         <h1 itemprop="headline" class="font-serif text-[4rem] md:text-[5.5rem] leading-[0.9] tracking-tighter mb-8 gsap-post-hero mx-auto max-w-5xl">
-          {article.title}
+          {post.title}
         </h1>
         <div class="flex items-center justify-center gap-6 font-sans text-sm tracking-widest uppercase text-brand-teal/60 gsap-post-hero">
           <span itemprop="author" itemscope itemtype="https://schema.org/Person" class="flex items-center gap-2">
             <span class="w-8 h-[1px] bg-brand-accent" aria-hidden="true"></span>
             Por <span itemprop="name">Dra. Julienne Hong</span>
           </span>
-          <time itemprop="datePublished" datetime={article.date} class="italic normal-case font-serif text-lg">{article.date}</time>
-          <span class="bg-brand-teal/5 px-3 py-1 rounded-full text-[0.65rem] font-bold">{article.readTime} de lectura</span>
+          <time itemprop="datePublished" datetime={post.publishedAt} class="italic normal-case font-serif text-lg">{dateStr}</time>
+          {post.readTime && (
+            <span class="bg-brand-teal/5 px-3 py-1 rounded-full text-[0.65rem] font-bold">{post.readTime} de lectura</span>
+          )}
         </div>
       </div>
     </header>
 
     <!-- Hero image -->
-    <section class="px-6 lg:px-12 pb-20 bg-white">
-      <div class="max-w-[1600px] mx-auto h-[60vh] md:h-[75vh] overflow-hidden gsap-post-img-container">
-        <img
-          itemprop="image"
-          src={article.imgSrc} alt={article.title}
-          class="w-full h-full object-cover filter grayscale-[30%] hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
-          loading="eager" width="1600" height="750"
-        />
-      </div>
-    </section>
+    {heroUrl && (
+      <section class="px-6 lg:px-12 pb-20 bg-white">
+        <div class="max-w-[1600px] mx-auto h-[60vh] md:h-[75vh] overflow-hidden gsap-post-img-container">
+          <img
+            itemprop="image"
+            src={heroUrl}
+            alt={post.image?.alt ?? post.title}
+            class="w-full h-full object-cover filter grayscale-[30%] hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
+            loading="eager" width="1600" height="750"
+          />
+        </div>
+      </section>
+    )}
 
     <!-- Body + TOC -->
     <section class="pb-32 px-6 lg:px-12 bg-white">
       <div class="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 xl:gap-24">
 
         <!-- TOC Sidebar -->
-        <aside class="w-full lg:w-1/4 hidden lg:block">
-          <div class="sticky top-32 border-l border-brand-teal/20 pl-8 py-2 gsap-post-toc">
-            <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-8 text-brand-teal">En este artículo</p>
-            <nav class="flex flex-col gap-4 font-sans text-sm opacity-80 text-brand-teal" aria-label="Tabla de contenidos">
-              {article.toc.map((item) => (
-                <a href={item.href} class="toc-link">{item.label}</a>
-              ))}
-            </nav>
-            <div class="mt-16 pt-8 border-t border-brand-teal/20">
-              <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-6 text-brand-teal">Compartir</p>
-              <div class="flex gap-4">
-                <button aria-label="Compartir en LinkedIn"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">IN</button>
-                <button aria-label="Compartir en Facebook"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">FB</button>
-                <button aria-label="Compartir en Twitter/X" class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">TW</button>
+        {toc.length > 0 && (
+          <aside class="w-full lg:w-1/4 hidden lg:block">
+            <div class="sticky top-32 border-l border-brand-teal/20 pl-8 py-2 gsap-post-toc">
+              <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-8 text-brand-teal">En este artículo</p>
+              <nav class="flex flex-col gap-4 font-sans text-sm opacity-80 text-brand-teal" aria-label="Tabla de contenidos">
+                {toc.map((item) => (
+                  <a href={item.href} class="toc-link">{item.label}</a>
+                ))}
+              </nav>
+              <div class="mt-16 pt-8 border-t border-brand-teal/20">
+                <p class="font-sans text-xs uppercase tracking-[0.2em] font-bold mb-6 text-brand-teal">Compartir</p>
+                <div class="flex gap-4">
+                  <button aria-label="Compartir en LinkedIn"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">IN</button>
+                  <button aria-label="Compartir en Facebook"  class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">FB</button>
+                  <button aria-label="Compartir en Twitter/X" class="w-10 h-10 border border-brand-teal/20 flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-colors rounded-full text-xs font-bold text-brand-teal">TW</button>
+                </div>
               </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+        )}
 
         <!-- Contenido del artículo -->
         <div itemprop="articleBody" class="w-full lg:w-2/3 xl:w-7/12 article-content text-brand-teal gsap-post-content">
 
-          <p class="drop-cap">{article.intro}</p>
+          {post.intro && (
+            <p class="drop-cap">{post.intro}</p>
+          )}
 
-          {article.sections.map((section, i) => (
-            <>
-              <h2 id={section.id}>{section.heading}</h2>
-              <div set:html={section.body} />
+          {post.quote && (
+            <blockquote>"{post.quote}"</blockquote>
+          )}
 
-              {section.list && (
-                <ul class="list-none space-y-4 mb-8 font-sans opacity-85 text-lg">
-                  {section.list.map((item) => (
-                    <li class="flex items-start gap-3">
-                      <span class="text-brand-accent">◆</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {/* Quote after section 1 */}
-              {i === 0 && (
-                <blockquote>"{article.quote}"</blockquote>
-              )}
-
-              {/* Hero image reprise after section 2 */}
-              {i === 1 && (
-                <figure class="my-12">
-                  <img
-                    src={article.imgSrc} alt={`${article.title} — imagen ilustrativa`}
-                    class="w-full h-auto object-cover grayscale-[20%]"
-                    loading="lazy" width="1200" height="675"
-                  />
-                  <figcaption class="text-sm font-sans mt-4 opacity-60 text-center uppercase tracking-widest">
-                    Clínica Odontomed · Conocoto, Valle de los Chillos.
-                  </figcaption>
-                </figure>
-              )}
-            </>
-          ))}
+          <div set:html={bodyHtml} />
 
           <!-- CTA final -->
           <div class="mt-20 p-10 bg-brand-teal/5 border border-brand-teal/20 text-center">

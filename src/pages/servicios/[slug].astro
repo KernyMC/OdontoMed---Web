@@ -2,24 +2,35 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar     from '../../components/Navbar.astro';
 import Footer     from '../../components/Footer.astro';
-import { services } from '../../data/services';
+import { getServiceBySlug } from '../../utils/services';
+import type { ServiceBenefit } from '../../utils/services';
 
-export const prerender = true;
+const { slug } = Astro.params;
+const service = await getServiceBySlug(slug!);
 
-export function getStaticPaths() {
-  return services.map((service) => ({
-    params: { slug: service.slug },
-    props:  { service },
-  }));
+if (!service) {
+  return Astro.redirect('/404');
 }
 
-const { service } = Astro.props;
+// Beneficios: usa los del CMS o fallback por defecto
+const benefits: ServiceBenefit[] = service.benefits?.length
+  ? service.benefits
+  : [
+      { _key: 'b1', title: 'Resultados duraderos',    description: 'Alta estética y funcionalidad inmediata.' },
+      { _key: 'b2', title: 'Recuperación rápida',     description: 'Técnicas mínimamente invasivas.' },
+      { _key: 'b3', title: 'Materiales premium',      description: 'Biocompatibles y de alta resistencia.' },
+      { _key: 'b4', title: 'Atención personalizada',  description: 'Seguimiento continuo de tu especialista.' },
+    ];
+
+// Texto "¿Por qué elegirnos?" con fallback
+const whyUs = service.whyUs ||
+  'Utilizamos protocolos internacionales y materiales de primera calidad certificados. Tu salud es nuestra prioridad número uno en el Valle de los Chillos.';
 ---
 
 <BaseLayout
   title={`${service.title} | Odontomed — ${service.category} en Conocoto`}
   description={`${service.desc} Tratamiento de ${service.title.toLowerCase()} en Odontomed, clínica dental en Conocoto, Valle de los Chillos, Quito.`}
-  ogImage={service.imgSrc}
+  ogImage={service.imgUrl}
   bodyTheme="dark"
 >
   <Navbar />
@@ -47,12 +58,18 @@ const { service } = Astro.props;
       </div>
 
       <div class="w-full lg:w-1/2 h-[50vh] lg:h-[60vh] overflow-hidden gsap-detail-hero border border-white/20">
-        <img
-          src={service.imgSrc}
-          alt={`Tratamiento de ${service.title} en Odontomed`}
-          class="w-full h-full object-cover filter grayscale contrast-125 hover:grayscale-0 transition-all duration-1000"
-          loading="lazy" width="800" height="600"
-        />
+        {service.imgUrl ? (
+          <img
+            src={service.imgUrl}
+            alt={`Tratamiento de ${service.title} en Odontomed`}
+            class="w-full h-full object-cover filter grayscale contrast-125 hover:grayscale-0 transition-all duration-1000"
+            loading="lazy" width="800" height="600"
+          />
+        ) : (
+          <div class="w-full h-full bg-brand-teal/30 flex items-center justify-center">
+            <span class="font-sans text-sm uppercase tracking-widest text-white/40">{service.title}</span>
+          </div>
+        )}
       </div>
 
     </div>
@@ -66,41 +83,48 @@ const { service } = Astro.props;
         <h2 class="font-serif text-[3rem] md:text-[4rem] leading-none mb-8">
           Sobre el <span class="italic text-brand-teal">Procedimiento.</span>
         </h2>
-        <p class="font-sans text-xl leading-relaxed mb-8 opacity-80">
-          En Odontomed diseñamos cada etapa de tu tratamiento pensando en tu bienestar y en resultados a largo plazo. Este procedimiento se realiza utilizando tecnología de vanguardia para asegurar el mínimo dolor, reduciendo los tiempos de recuperación y maximizando la eficacia.
-        </p>
-        <p class="font-sans text-lg leading-relaxed mb-12 opacity-80">
-          Nuestro equipo de especialistas te acompañará durante todo el proceso, comenzando con un diagnóstico honesto y preciso. Resolvemos todas tus dudas y aseguramos que tu experiencia sea completamente satisfactoria desde la primera consulta hasta el alta final.
-        </p>
-        <div class="bg-brand-teal/5 p-8 border-l-2 border-brand-accent">
+
+        {service.body?.length ? (
+          // Contenido del CMS (Portable Text — bloques de texto simples)
+          service.body
+            .filter((b: any) => b._type === 'block')
+            .map((b: any) => (
+              <p class="font-sans text-lg leading-relaxed mb-6 opacity-80">
+                {b.children?.map((s: any) => s.text).join('')}
+              </p>
+            ))
+        ) : (
+          // Texto por defecto mientras el CMS está vacío
+          <>
+            <p class="font-sans text-xl leading-relaxed mb-8 opacity-80">
+              En Odontomed diseñamos cada etapa de tu tratamiento pensando en tu bienestar y en resultados a largo plazo. Este procedimiento se realiza utilizando tecnología de vanguardia para asegurar el mínimo dolor, reduciendo los tiempos de recuperación y maximizando la eficacia.
+            </p>
+            <p class="font-sans text-lg leading-relaxed mb-12 opacity-80">
+              Nuestro equipo de especialistas te acompañará durante todo el proceso, comenzando con un diagnóstico honesto y preciso. Resolvemos todas tus dudas y aseguramos que tu experiencia sea completamente satisfactoria desde la primera consulta hasta el alta final.
+            </p>
+          </>
+        )}
+
+        <div class="bg-brand-teal/5 p-8 border-l-2 border-brand-accent mt-4">
           <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-4 text-brand-teal">¿Por qué elegirnos?</h3>
-          <p class="font-sans text-base opacity-80">
-            Utilizamos protocolos internacionales y materiales de primera calidad certificados. Tu salud es nuestra prioridad número uno en el Valle de los Chillos.
-          </p>
+          <p class="font-sans text-base opacity-80">{whyUs}</p>
         </div>
       </div>
 
-      <!-- Sidebar -->
+      <!-- Sidebar de beneficios -->
       <aside class="w-full md:w-1/3 gsap-detail-content">
         <div class="border border-brand-teal/20 p-8 sticky top-32 bg-white text-brand-teal">
           <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-8 text-brand-accent">Beneficios Clave</h3>
           <ul class="space-y-6 font-sans text-sm opacity-80">
-            <li class="flex items-start gap-4">
-              <span class="text-brand-accent text-xl leading-none">✓</span>
-              <span><strong>Resultados duraderos</strong><br />Alta estética y funcionalidad inmediata.</span>
-            </li>
-            <li class="flex items-start gap-4">
-              <span class="text-brand-accent text-xl leading-none">✓</span>
-              <span><strong>Recuperación rápida</strong><br />Técnicas mínimamente invasivas.</span>
-            </li>
-            <li class="flex items-start gap-4">
-              <span class="text-brand-accent text-xl leading-none">✓</span>
-              <span><strong>Materiales premium</strong><br />Biocompatibles y de alta resistencia.</span>
-            </li>
-            <li class="flex items-start gap-4">
-              <span class="text-brand-accent text-xl leading-none">✓</span>
-              <span><strong>Atención personalizada</strong><br />Seguimiento continuo de tu especialista.</span>
-            </li>
+            {benefits.map((b) => (
+              <li class="flex items-start gap-4" key={b._key}>
+                <span class="text-brand-accent text-xl leading-none">✓</span>
+                <span>
+                  <strong>{b.title}</strong>
+                  {b.description && <><br />{b.description}</>}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
       </aside>
