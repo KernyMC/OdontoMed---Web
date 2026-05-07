@@ -72,7 +72,7 @@ const medicina    = allServices.filter((s) => s.group === 'medicina');
   document.addEventListener('astro:page-load', () => {
     if (!window.gsap || !window.ScrollTrigger) return;
     gsap.fromTo('.gsap-service-item', { y: 50, opacity: 0 }, {
-      y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power2.out',
+      y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: 'power2.out',
       scrollTrigger: { trigger: '#servicios-container', start: 'top 90%', once: true },
     });
   });

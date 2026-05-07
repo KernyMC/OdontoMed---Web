@@ -55,6 +55,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-m
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" />
 
+    <!-- Third-party origins — establish TCP+TLS before browser needs them -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <link rel="preconnect" href="https://assets.zyrosite.com" />
+    <link rel="preconnect" href="https://cdn.sanity.io" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

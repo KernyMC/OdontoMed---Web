@@ -3,9 +3,10 @@ import BaseLayout  from '../layouts/BaseLayout.astro';
 import Navbar      from '../components/Navbar.astro';
 import Footer      from '../components/Footer.astro';
 import ServiceCard from '../components/ui/ServiceCard.astro';
-import { services } from '../data/services';
+import { getServices } from '../utils/services';
 
-const featuredServices = services.slice(0, 4);
+const allServices      = await getServices();
+const featuredServices = allServices.slice(0, 4);
 
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
@@ -89,7 +90,13 @@ const schemaData = JSON.stringify({
     <div class="absolute inset-0 z-0 overflow-hidden bg-brand-teal">
       <div class="absolute inset-0 bg-brand-teal/85 mix-blend-multiply z-10"></div>
       <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-teal/50 z-10"></div>
-      <video autoplay loop muted playsinline class="w-full h-full object-cover gsap-hero-bg scale-110 opacity-70" aria-hidden="true">
+      <video
+        autoplay loop muted playsinline
+        preload="none"
+        poster="https://res.cloudinary.com/di40d5qvz/video/upload/so_0,w_1280,q_auto,f_auto/v1772684076/cz4s1rwzz9rmr0cwqgs9pmj2br_result__ldytjq.jpg"
+        class="w-full h-full object-cover gsap-hero-bg scale-110 opacity-70"
+        aria-hidden="true"
+      >
         <source src="https://res.cloudinary.com/di40d5qvz/video/upload/v1772684076/cz4s1rwzz9rmr0cwqgs9pmj2br_result__ldytjq.mp4" type="video/mp4" />
       </video>
     </div>
@@ -193,7 +200,9 @@ const schemaData = JSON.stringify({
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gsap-services-grid">
-        {featuredServices.map((s) => <ServiceCard {...s} />)}
+        {featuredServices.map((s) => (
+          <ServiceCard slug={s.slug} title={s.title} imgSrc={s.imgUrl} desc={s.desc} />
+        ))}
       </div>
     </div>
   </section>
@@ -418,44 +427,44 @@ const schemaData = JSON.stringify({
     gsap.set('.gsap-home-team-img', { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.1 });
     gsap.to('.gsap-home-team-img', {
       clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 1.5, ease: 'power3.inOut',
-      scrollTrigger: { trigger: '.gsap-home-team-img', start: 'top 60%' },
+      scrollTrigger: { trigger: '.gsap-home-team-img', start: 'top 60%', once: true },
     });
 
     gsap.fromTo('.gsap-home-team-text', { x: 50, opacity: 0 }, {
       x: 0, opacity: 1, duration: 1, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-home-team-img', start: 'top 50%' },
+      scrollTrigger: { trigger: '.gsap-home-team-img', start: 'top 50%', once: true },
     });
 
     gsap.fromTo('.gsap-services-el', { y: 40, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-services-grid', start: 'top 80%' },
+      scrollTrigger: { trigger: '.gsap-services-grid', start: 'top 80%', once: true },
     });
     gsap.fromTo('.gsap-services-grid .gsap-service-item', { y: 60, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-services-grid', start: 'top 80%' },
+      scrollTrigger: { trigger: '.gsap-services-grid', start: 'top 80%', once: true },
     });
 
     gsap.fromTo('.gsap-tech-home-el', { y: 40, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 85%' },
+      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 85%', once: true },
     });
     gsap.fromTo('.gsap-tech-home-card', { y: 40, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 80%' },
+      scrollTrigger: { trigger: '.gsap-tech-home-card', start: 'top 80%', once: true },
     });
 
     gsap.fromTo('.gsap-reviews-el', { y: 40, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-review-item', start: 'top 80%' },
+      scrollTrigger: { trigger: '.gsap-review-item', start: 'top 80%', once: true },
     });
     gsap.fromTo('.gsap-review-item', { y: 50, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-review-item', start: 'top 80%' },
+      scrollTrigger: { trigger: '.gsap-review-item', start: 'top 80%', once: true },
     });
 
     gsap.fromTo('.gsap-map-el', { y: 50, opacity: 0 }, {
       y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power2.out',
-      scrollTrigger: { trigger: '.gsap-map-el', start: 'top 75%' },
+      scrollTrigger: { trigger: '.gsap-map-el', start: 'top 75%', once: true },
     });
   });
 </script>

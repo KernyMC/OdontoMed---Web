@@ -4,13 +4,21 @@ import Navbar     from '../../components/Navbar.astro';
 import Footer     from '../../components/Footer.astro';
 import { getServiceBySlug } from '../../utils/services';
 import type { ServiceBenefit } from '../../utils/services';
+import { getSiteSettings } from '../../lib/settings';
 
 const { slug } = Astro.params;
-const service = await getServiceBySlug(slug!);
+const [service, settings] = await Promise.all([
+  getServiceBySlug(slug!),
+  getSiteSettings(),
+]);
 
 if (!service) {
   return Astro.redirect('/404');
 }
+
+const waNumber  = settings.whatsapp?.replace(/\D/g, '') ?? '593979286633'
+const waMessage = encodeURIComponent(`Hola, me gustaría agendar el tratamiento de ${service.title}. ¿Podría darme más información?`)
+const waHref    = `https://wa.me/${waNumber}?text=${waMessage}`
 
 // Beneficios: usa los del CMS o fallback por defecto
 const benefits: ServiceBenefit[] = service.benefits?.length
@@ -40,10 +48,11 @@ const whyUs = service.whyUs ||
     <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row items-center gap-16">
 
       <div class="w-full lg:w-1/2">
-        <a href="/servicios" class="mb-8 font-sans text-xs uppercase tracking-widest text-brand-light hover:text-white transition-colors flex items-center gap-2 gsap-detail-hero inline-flex">
-          <span>←</span> Volver a Servicios
+        <a href="/servicios" class="mb-10 font-sans text-xs uppercase tracking-widest text-brand-light hover:text-white transition-colors flex items-center gap-2 gsap-detail-hero inline-flex">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          Volver a Servicios
         </a>
-        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-white/50 gsap-detail-hero mt-4">
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-white/50 gsap-detail-hero">
           {service.category}
         </span>
         <h1 class="font-serif text-[4rem] md:text-[6rem] leading-[0.9] tracking-tighter mb-8 gsap-detail-hero">
@@ -51,7 +60,7 @@ const whyUs = service.whyUs ||
         </h1>
         <p class="font-sans text-xl opacity-90 max-w-lg gsap-detail-hero">{service.desc}</p>
         <div class="mt-12 gsap-detail-hero">
-          <a href="/contacto" class="bg-brand-accent text-white px-8 py-4 text-sm uppercase tracking-widest hover:bg-white hover:text-brand-teal transition-colors border border-brand-accent inline-block font-bold">
+          <a href={waHref} target="_blank" rel="noopener noreferrer" class="bg-white text-brand-teal px-8 py-4 text-sm uppercase tracking-widest hover:scale-105 transition-transform duration-300 border border-white inline-block font-bold">
             Agendar este tratamiento
           </a>
         </div>
@@ -62,7 +71,7 @@ const whyUs = service.whyUs ||
           <img
             src={service.imgUrl}
             alt={`Tratamiento de ${service.title} en Odontomed`}
-            class="w-full h-full object-cover filter grayscale contrast-125 hover:grayscale-0 transition-all duration-1000"
+            class="w-full h-full object-cover"
             loading="lazy" width="800" height="600"
           />
         ) : (
@@ -113,12 +122,12 @@ const whyUs = service.whyUs ||
 
       <!-- Sidebar de beneficios -->
       <aside class="w-full md:w-1/3 gsap-detail-content">
-        <div class="border border-brand-teal/20 p-8 sticky top-32 bg-white text-brand-teal">
-          <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-8 text-brand-accent">Beneficios Clave</h3>
+        <div class="border border-white/20 p-8 sticky top-32 bg-brand-teal text-white">
+          <h3 class="font-sans text-sm uppercase tracking-widest font-bold mb-8 text-brand-light">Beneficios Clave</h3>
           <ul class="space-y-6 font-sans text-sm opacity-80">
             {benefits.map((b) => (
               <li class="flex items-start gap-4" key={b._key}>
-                <span class="text-brand-accent text-xl leading-none">✓</span>
+                <span class="text-brand-light text-xl leading-none">✓</span>
                 <span>
                   <strong>{b.title}</strong>
                   {b.description && <><br />{b.description}</>}
