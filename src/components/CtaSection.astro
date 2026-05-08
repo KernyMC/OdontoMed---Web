@@ -1,0 +1,98 @@
+---
+import { getSiteSettings } from '../lib/settings'
+
+const settings = await getSiteSettings()
+const waNumber = settings.whatsapp?.replace(/\D/g, '') ?? '593979286633'
+const waHref   = `https://wa.me/${waNumber}`
+
+const IMAGES = [
+  'https://cdn.sanity.io/images/g6lpsvgv/production/8f728215a0e2ffd1ee580d8ef505150141dbd6b8-393x559.webp',
+  'https://cdn.sanity.io/images/g6lpsvgv/production/417d3e96c19f9771a8ea84ae496d1d1b80c061c2-393x559.webp',
+  'https://cdn.sanity.io/images/g6lpsvgv/production/38c7b6be074e1cbf0da36e9abe13c8a13a69af00-393x559.webp',
+]
+
+const imageSrc = IMAGES[Math.floor(Math.random() * IMAGES.length)]
+const imageAlt = 'Especialista Odontomed'
+
+const COPIES = [
+  {
+    heading: 'Tu sonrisa es<br /><em>nuestra prioridad.</em>',
+    subtext:  'Agenda tu evaluación hoy y recibe atención personalizada de nuestro equipo en Conocoto.',
+  },
+  {
+    heading: '¿Primera vez?<br />Estás en <em>buenas manos.</em>',
+    subtext:  'Sin nervios, sin complicaciones. Agenda tu primera cita y nosotros nos encargamos del resto.',
+  },
+  {
+    heading: 'Más que dientes,<br /><em>cuidamos de ti.</em>',
+    subtext:  'Agenda tu visita con nuestros especialistas y descubre una atención distinta.',
+  },
+  {
+    heading: '¿Tienes dudas?<br /><em>Escríbenos</em> por WhatsApp.',
+    subtext:  'Respuesta rápida, sin esperas. Un mensaje y listo.',
+  },
+  {
+    heading: 'Reserva tu consulta<br /><em>en un minuto.</em>',
+    subtext:  'Sin filas, sin llamadas. Solo agenda y nuestro equipo te confirma el horario.',
+  },
+]
+
+const copy = COPIES[Math.floor(Math.random() * COPIES.length)]
+---
+
+<section class="px-4 sm:px-6 lg:px-12 pt-6 pb-16 bg-white" data-color="light">
+  <div class="max-w-[850px] mx-auto rounded-2xl overflow-hidden" style="background:#ffffff; box-shadow: 0 4px 32px rgba(68,128,135,0.10), 0 1px 4px rgba(0,0,0,0.06)">
+    <div class="relative min-h-[260px] sm:min-h-[340px] lg:min-h-[440px]">
+
+      <!-- Izquierda: contenido CTA -->
+      <div class="relative z-20 w-full sm:w-[55%] py-8 px-6 sm:py-12 sm:px-10 lg:py-16 lg:px-20 flex flex-col justify-center items-center sm:items-start text-center sm:text-left min-h-[260px] sm:min-h-[340px] lg:min-h-[440px]">
+
+        <h2 class="font-serif text-[1.6rem] sm:text-[2.2rem] lg:text-[3.2rem] leading-[1.05] tracking-tight text-brand-teal mb-3 sm:mb-5 lg:mb-6" set:html={copy.heading} />
+
+        <div class="w-8 h-[2px] bg-brand-accent mb-4 sm:mb-6 lg:mb-8"></div>
+
+        <p class="font-sans text-sm sm:text-base lg:text-lg text-brand-teal/70 leading-relaxed mb-6 sm:mb-8 lg:mb-10 max-w-xs sm:max-w-sm lg:max-w-md">
+          {copy.subtext}
+        </p>
+
+        <a
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 sm:gap-4 bg-brand-accent text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-[0.6rem] sm:text-xs uppercase tracking-widest font-bold rounded-lg hover:bg-brand-teal transition-colors duration-300 w-fit"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span class="hidden sm:inline">Agenda tu cita ahora</span>
+          <span class="sm:hidden">Agendar cita</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </a>
+
+      </div>
+
+      <!-- Imagen: absolute derecha, visible en todos los tamaños -->
+      {imageSrc ? (
+        <div class="hidden sm:block absolute right-0 top-0 bottom-0 w-[47%] lg:w-[52%] z-30 overflow-hidden" style="background:#ffffff">
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            class="absolute right-0 top-0 h-full w-auto max-w-none"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ) : (
+        <div class="absolute right-0 top-0 bottom-0 w-[44%] z-10 bg-brand-light/30 flex items-center justify-center">
+          <span class="font-sans text-xs uppercase tracking-widest text-brand-teal/30">Imagen</span>
+        </div>
+      )}
+
+    </div>
+  </div>
+</section>
