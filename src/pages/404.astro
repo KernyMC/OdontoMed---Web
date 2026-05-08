@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar     from '../components/Navbar.astro';
+import Footer     from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Página no encontrada | Odontomed"
+  description="La página que buscas no existe. Vuelve al inicio o explora nuestros servicios."
+  bodyTheme="light"
+>
+  <Navbar />
+
+  <section class="min-h-screen flex items-center justify-center px-6 lg:px-12 bg-white" data-color="light">
+    <div class="max-w-[800px] mx-auto text-center">
+
+      <!-- Número 404 -->
+      <p class="font-serif text-[10rem] sm:text-[14rem] leading-none tracking-tighter text-brand-teal/10 select-none gsap-404-num">
+        404
+      </p>
+
+      <!-- Contenido -->
+      <div class="-mt-8 sm:-mt-16 gsap-404-content">
+        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-6">
+          Página no encontrada
+        </span>
+
+        <h1 class="font-serif text-[3rem] sm:text-[4.5rem] leading-[0.95] tracking-tight text-brand-teal mb-6">
+          Parece que esta página<br />
+          <em>no existe.</em>
+        </h1>
+
+        <div class="w-10 h-[2px] bg-brand-accent mx-auto mb-8"></div>
+
+        <p class="font-sans text-lg text-brand-teal/60 leading-relaxed mb-12 max-w-md mx-auto">
+          La dirección que buscas no está disponible o fue movida. No te preocupes, desde aquí puedes volver a donde necesitas.
+        </p>
+
+        <!-- Acciones -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="/"
+            class="bg-brand-teal text-white px-8 py-4 text-xs uppercase tracking-widest font-bold hover:bg-brand-accent transition-colors duration-300 inline-block"
+          >
+            Volver al inicio
+          </a>
+          <a
+            href="/servicios"
+            class="border border-brand-teal/30 text-brand-teal px-8 py-4 text-xs uppercase tracking-widest font-bold hover:border-brand-accent hover:text-brand-accent transition-colors duration-300 inline-block"
+          >
+            Ver servicios
+          </a>
+        </div>
+
+        <!-- Links rápidos -->
+        <div class="mt-16 pt-10 border-t border-brand-teal/10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-sans text-xs uppercase tracking-widest text-brand-teal/40">
+          <a href="/nosotros" class="hover:text-brand-accent transition-colors">Nosotros</a>
+          <span aria-hidden="true">·</span>
+          <a href="/servicios" class="hover:text-brand-accent transition-colors">Servicios</a>
+          <span aria-hidden="true">·</span>
+          <a href="/blog" class="hover:text-brand-accent transition-colors">Blog</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    if (!window.gsap) return
+    gsap.fromTo('.gsap-404-num',
+      { opacity: 0, scale: 0.95 },
+      { opacity: 1, scale: 1, duration: 1, ease: 'power3.out' }
+    )
+    gsap.fromTo('.gsap-404-content',
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power2.out' }
+    )
+  })
+</script>

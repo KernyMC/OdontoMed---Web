@@ -2,6 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Navbar     from '../components/Navbar.astro';
 import Footer     from '../components/Footer.astro';
+import { sanityClient, urlFor } from '../utils/sanity';
+
+const allPhotos = await sanityClient.fetch<any[]>(`
+  *[_type == "clinicPhoto"] | order(order asc, _createdAt asc) {
+    _id, label, category, year,
+    "photoUrl": photo.asset->url,
+    photo
+  }
+`)
+
+const oldPhotos    = allPhotos.filter(p => p.category === 'historia')
+const clinicPhotos = allPhotos.filter(p => p.category === 'actual')
 ---
 
 <BaseLayout
@@ -129,6 +141,95 @@ import Footer     from '../components/Footer.astro';
     </div>
   </section>
 
+  <!-- ── Nuestros Inicios ─────────────────────────────────────────────────── -->
+  {oldPhotos.length > 0 && (
+    <section class="py-24 md:py-32 px-6 lg:px-12 bg-white overflow-hidden" data-color="light">
+      <div class="max-w-[1600px] mx-auto">
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent gsap-origins-header">
+          Historia
+        </span>
+        <h2 class="font-serif text-[3rem] md:text-[5rem] leading-[0.9] tracking-tighter text-brand-teal mb-16 gsap-origins-header">
+          Nuestros <span class="italic">Inicios.</span>
+        </h2>
+        <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory gsap-origins-strip">
+          {oldPhotos.map((p) => (
+            <div class="shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px]">
+              <div class="overflow-hidden rounded-lg h-[300px] sm:h-[360px]">
+                <img
+                  src={urlFor(p.photo).width(800).auto('format').url()}
+                  alt={p.year ? `Odontomed ${p.year}` : 'Odontomed — archivo histórico'}
+                  class="w-full h-full object-cover grayscale sepia hover:sepia-0 transition-all duration-700"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              {p.year && (
+                <p class="mt-3 font-sans text-xs uppercase tracking-widest text-brand-teal/40">{p.year}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Nuestra Clínica ────────────────────────────────────────────────── -->
+  {clinicPhotos.length > 0 && (
+    <section id="galeria" class="py-24 md:py-32 px-6 lg:px-12 bg-brand-soft" data-color="soft">
+      <div class="max-w-[1600px] mx-auto">
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent gsap-gallery-header">
+          Instalaciones
+        </span>
+        <h2 class="font-serif text-[3rem] md:text-[5rem] leading-[0.9] tracking-tighter text-brand-teal mb-16 gsap-gallery-header">
+          Nuestra <span class="italic">Clínica.</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {clinicPhotos.map((p, i) => (
+            <button
+              type="button"
+              class="gsap-gallery-card group relative overflow-hidden rounded-xl cursor-pointer block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+              data-lightbox-src={urlFor(p.photo).width(1400).auto('format').url()}
+              data-lightbox-label={p.label}
+              aria-label={`Ver foto: ${p.label}`}
+            >
+              <div class="h-64 sm:h-72 overflow-hidden">
+                <img
+                  src={urlFor(p.photo).width(800).height(600).fit('crop').auto('format').url()}
+                  alt={p.label}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </div>
+              <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to top, rgba(34,74,79,0.75) 0%, transparent 50%)" />
+              <div class="absolute bottom-0 left-0 right-0 px-5 py-4 flex items-end justify-between">
+                <p class="font-sans text-sm text-white font-semibold tracking-wide">{p.label}</p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/70 shrink-0" aria-hidden="true">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                </svg>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Lightbox -->
+      <dialog id="clinic-lightbox" class="fixed inset-0 w-full h-full max-w-none max-h-none bg-transparent p-0 m-0 backdrop:bg-black/80">
+        <div class="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8" id="lightbox-backdrop">
+          <div class="relative max-w-5xl w-full">
+            <img id="lightbox-img" src="" alt="" class="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl" />
+            <p id="lightbox-label" class="mt-4 text-center font-sans text-sm uppercase tracking-widest text-white/70"></p>
+          </div>
+          <button id="lightbox-close" class="absolute top-4 right-4 text-white/80 hover:text-white transition-colors" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </dialog>
+    </section>
+  )}
+
   <!-- ── Valores ─────────────────────────────────────────────────────────── -->
   <section id="valores" class="py-24 md:py-40 px-6 lg:px-12 bg-brand-soft" data-color="soft">
     <div class="max-w-[1600px] mx-auto">
@@ -212,43 +313,59 @@ import Footer     from '../components/Footer.astro';
 
   <!-- ── CTA Final ──────────────────────────────────────────────────────── -->
   <section class="py-24 md:py-40 px-6 lg:px-12 bg-white" data-color="light">
-    <div class="max-w-[1400px] mx-auto text-center">
-      <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-6 text-brand-accent gsap-cta-about">
-        Comienza hoy
-      </span>
-      <h2 class="font-serif text-[3rem] md:text-[5.5rem] leading-[0.85] tracking-tighter text-brand-teal mb-10 gsap-cta-about">
-        Tu salud<br />
-        <span class="italic" style="-webkit-text-stroke: 1px #448087; color: transparent;">es nuestra misión.</span>
-      </h2>
-      <ul class="font-sans text-sm uppercase tracking-widest space-y-5 mb-14 max-w-sm mx-auto gsap-cta-about">
-        <li class="flex items-center gap-4 justify-center text-brand-teal/70">
-          <span class="w-8 h-[1px] bg-brand-accent flex-shrink-0"></span>
-          Más de 40 años de experiencia clínica
-        </li>
-        <li class="flex items-center gap-4 justify-center text-brand-teal/70">
-          <span class="w-8 h-[1px] bg-brand-accent flex-shrink-0"></span>
-          13 especialidades odontológicas y médicas
-        </li>
-        <li class="flex items-center gap-4 justify-center text-brand-teal/70">
-          <span class="w-8 h-[1px] bg-brand-accent flex-shrink-0"></span>
-          Tecnología de diagnóstico de última generación
-        </li>
-      </ul>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 gsap-cta-about">
-        <a
-          href="https://wa.me/593979286633"
-          target="_blank" rel="noopener noreferrer"
-          class="bg-brand-accent text-white px-10 py-4 text-sm uppercase tracking-widest hover:bg-brand-teal transition-colors duration-300 font-bold"
-        >
-          Agendar cita
-        </a>
-        <a
-          href="/servicios"
-          class="border-b border-brand-teal/40 pb-2 font-sans text-sm uppercase tracking-widest hover:text-brand-accent transition-colors text-brand-teal"
-        >
-          Ver especialidades
-        </a>
+    <div class="max-w-[680px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_220px] items-stretch rounded-2xl overflow-hidden" style="box-shadow: 0 8px 40px rgba(68,128,135,0.12), 0 2px 8px rgba(0,0,0,0.06)">
+
+      <!-- Contenido izquierdo -->
+      <div class="bg-white px-10 py-12 flex flex-col justify-center">
+        <span class="block text-[0.65rem] uppercase tracking-[0.3em] font-sans font-semibold mb-5 text-brand-accent gsap-cta-about">
+          Comienza hoy
+        </span>
+        <h2 class="font-serif text-[2.4rem] md:text-[3.2rem] leading-[0.9] tracking-tighter text-brand-teal mb-8 gsap-cta-about">
+          Tu salud<br />
+          <span class="italic" style="-webkit-text-stroke: 1px #448087; color: transparent;">es nuestra misión.</span>
+        </h2>
+        <ul class="font-sans text-xs uppercase tracking-widest space-y-4 mb-10 gsap-cta-about">
+          <li class="flex items-center gap-3 text-brand-teal/70">
+            <span class="w-6 h-[1px] bg-brand-accent flex-shrink-0"></span>
+            Más de 40 años de experiencia clínica
+          </li>
+          <li class="flex items-center gap-3 text-brand-teal/70">
+            <span class="w-6 h-[1px] bg-brand-accent flex-shrink-0"></span>
+            13 especialidades odontológicas y médicas
+          </li>
+          <li class="flex items-center gap-3 text-brand-teal/70">
+            <span class="w-6 h-[1px] bg-brand-accent flex-shrink-0"></span>
+            Tecnología de diagnóstico de última generación
+          </li>
+        </ul>
+        <div class="flex flex-col sm:flex-row items-start gap-4 gsap-cta-about">
+          <a
+            href="https://wa.me/593979286633"
+            target="_blank" rel="noopener noreferrer"
+            class="bg-brand-accent text-white px-7 py-3 text-xs uppercase tracking-widest hover:bg-brand-teal transition-colors duration-300 font-bold"
+          >
+            Agendar cita
+          </a>
+          <a
+            href="/servicios"
+            class="border-b border-brand-teal/40 pb-1 font-sans text-xs uppercase tracking-widest hover:text-brand-accent transition-colors text-brand-teal self-center"
+          >
+            Ver especialidades
+          </a>
+        </div>
       </div>
+
+      <!-- Imagen derecha: fondo teal + imagen desde abajo -->
+      <div class="hidden lg:flex relative bg-brand-teal overflow-hidden gsap-cta-about">
+        <img
+          src="https://cdn.sanity.io/images/g6lpsvgv/production/c33c9e49cb9ef4dbb0926b8b54d8b36153137066-775x1033.heif"
+          alt="Especialista Odontomed"
+          class="absolute bottom-0 left-1/2 -translate-x-1/2 h-full w-auto max-w-none object-contain object-bottom"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
     </div>
   </section>
 
@@ -300,6 +417,57 @@ import Footer     from '../components/Footer.astro';
       { y: 0, opacity: 1, duration: 0.7, stagger: 0.08, ease: 'power2.out',
         scrollTrigger: { trigger: '#valores', start: 'top 75%', once: true } }
     );
+
+    // Inicios
+    gsap.fromTo('.gsap-origins-header',
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+        scrollTrigger: { trigger: '.gsap-origins-header', start: 'top 85%', once: true } }
+    )
+    gsap.fromTo('.gsap-origins-strip',
+      { x: 60, opacity: 0 },
+      { x: 0, opacity: 1, duration: 1, ease: 'power2.out',
+        scrollTrigger: { trigger: '.gsap-origins-strip', start: 'top 85%', once: true } }
+    )
+
+    // Galería clínica
+    gsap.fromTo('.gsap-gallery-header',
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+        scrollTrigger: { trigger: '.gsap-gallery-header', start: 'top 85%', once: true } }
+    )
+    gsap.fromTo('.gsap-gallery-card',
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, stagger: 0.08, ease: 'power2.out',
+        scrollTrigger: { trigger: '.gsap-gallery-card', start: 'top 85%', once: true } }
+    )
+
+    // Lightbox
+    const lightbox   = document.getElementById('clinic-lightbox')
+    const lbImg      = document.getElementById('lightbox-img')
+    const lbLabel    = document.getElementById('lightbox-label')
+    const lbClose    = document.getElementById('lightbox-close')
+    const lbBackdrop = document.getElementById('lightbox-backdrop')
+
+    document.querySelectorAll('[data-lightbox-src]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        lbImg.src     = btn.dataset.lightboxSrc
+        lbImg.alt     = btn.dataset.lightboxLabel
+        lbLabel.textContent = btn.dataset.lightboxLabel
+        lightbox.showModal()
+        document.body.style.overflow = 'hidden'
+      })
+    })
+
+    const closeLightbox = () => {
+      lightbox.close()
+      lbImg.src = ''
+      document.body.style.overflow = ''
+    }
+
+    lbClose?.addEventListener('click', closeLightbox)
+    lbBackdrop?.addEventListener('click', (e) => { if (e.target === lbBackdrop) closeLightbox() })
+    lightbox?.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox() })
 
     // CTA
     gsap.fromTo('.gsap-cta-about',

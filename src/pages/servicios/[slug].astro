@@ -151,26 +151,38 @@ const whyUs = service.whyUs ||
         <h2 class="font-serif text-[2rem] md:text-[3rem] leading-[0.9] tracking-tighter text-brand-teal mb-14">
           Especialistas en <span class="italic">{service.category}</span>
         </h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-10">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {service.specialists.map((s) => (
-            <div class="flex flex-col items-center text-center gap-4">
+            <div class="rounded-2xl overflow-hidden relative h-80 sm:h-96 bg-brand-teal/10">
+
+              <!-- Foto -->
               {s.photoUrl ? (
                 <img
                   src={s.photoUrl}
                   alt={s.name}
-                  class="w-24 h-24 rounded-full object-cover border-2 border-brand-light"
+                  class="absolute inset-0 w-full h-full object-cover object-top"
                   loading="lazy"
                   decoding="async"
                 />
               ) : (
-                <div class="w-24 h-24 rounded-full bg-brand-teal flex items-center justify-center text-white font-serif font-bold text-3xl border-2 border-brand-light">
-                  {s.name.charAt(0)}
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="font-serif font-bold text-[5rem] text-brand-teal/20">
+                    {s.name.charAt(0)}
+                  </span>
                 </div>
               )}
-              <div>
-                <p class="font-serif text-base text-brand-teal leading-snug">{s.name}</p>
-                <p class="font-sans text-[0.65rem] uppercase tracking-widest text-brand-accent mt-1">{s.specialty}</p>
+
+              <!-- Overlay degradado -->
+              <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(34,74,79,0.88) 0%, rgba(34,74,79,0.4) 30%, transparent 65%)" />
+
+              <!-- Nombre y especialidad encima de la imagen -->
+              <div class="absolute bottom-0 left-0 right-0 px-5 py-5">
+                <p class="font-serif text-white text-base leading-snug">{s.name}</p>
+                {s.specialty && (
+                  <p class="font-sans text-[0.6rem] uppercase tracking-widest text-brand-light mt-1">{s.specialty}</p>
+                )}
               </div>
+
             </div>
           ))}
         </div>
