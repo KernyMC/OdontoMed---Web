@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import node from "@astrojs/node";
 import sanity from "@sanity/astro";
+import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,6 +17,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
+    icon(),
     react(),
     sanity({
       projectId: "g6lpsvgv",

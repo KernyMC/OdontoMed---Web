@@ -4,9 +4,16 @@ import Navbar      from '../components/Navbar.astro';
 import Footer      from '../components/Footer.astro';
 import ServiceCard from '../components/ui/ServiceCard.astro';
 import { getServices } from '../utils/services';
+import { getTechGroups } from '../utils/technology';
+import { getReviews } from '../utils/reviews';
+import { Icon } from 'astro-icon/components';
 
 const allServices      = await getServices();
 const featuredServices = allServices.slice(0, 4);
+
+const techGroups = await getTechGroups();
+const reviews    = await getReviews();
+
 
 const schemaData = JSON.stringify({
   "@context": "https://schema.org",
@@ -102,11 +109,7 @@ const schemaData = JSON.stringify({
     </div>
 
     <div class="max-w-[1200px] w-full relative z-10 text-white mt-12 text-center flex flex-col items-center gsap-hero-content">
-      <h2 class="gsap-hero-el font-sans text-[10px] md:text-xs tracking-[0.15em] md:tracking-[0.35em] uppercase mb-4 text-white/30 font-semibold flex items-center gap-2 md:gap-4">
-        <span class="hidden sm:inline-block w-8 h-px bg-white/20"></span>
-        Dentista en Conocoto · Desde 1976
-        <span class="hidden sm:inline-block w-8 h-px bg-white/20"></span>
-      </h2>
+
       <h1 class="font-serif text-[2.5rem] sm:text-[4.5rem] lg:text-[7rem] leading-[0.9] tracking-tighter mb-6 drop-shadow-lg max-w-full px-2 mx-auto">
         <div class="overflow-hidden"><span class="gsap-hero-title inline-block">Especialistas en</span></div>
         <div class="overflow-hidden"><span class="gsap-hero-title inline-block text-[2rem] sm:text-[3.8rem] lg:text-[6rem] mt-2 italic text-white/90">Odontología</span></div>
@@ -196,7 +199,7 @@ const schemaData = JSON.stringify({
           href="/servicios"
           class="font-sans text-sm uppercase tracking-widest border-b border-white/40 pb-2 hover:border-white hover:text-brand-light transition-all gsap-services-el shrink-0"
         >
-          Ver todos los servicios →
+          Ver todos los servicios <Icon name="ph:arrow-right-light" class="inline w-4 h-4 ml-1" />
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gsap-services-grid">
@@ -225,78 +228,34 @@ const schemaData = JSON.stringify({
           href="/tecnologia"
           class="font-sans text-sm uppercase tracking-widest border-b border-brand-teal/40 pb-2 hover:border-brand-teal hover:text-brand-accent transition-all gsap-tech-home-el shrink-0 text-brand-teal"
         >
-          Ver toda la tecnología →
+          Ver toda la tecnología <Icon name="ph:arrow-right-light" class="inline w-4 h-4 ml-1" />
         </a>
       </div>
 
-      <!-- 4 group cards — gap-px + colored container = hairline separators -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-brand-teal/10 border border-brand-teal/10">
-
-        <!-- Radiografías -->
-        <a href="/tecnologia#tech-rx" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
-          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
-              <rect x="3" y="3" width="26" height="26" rx="1.5"/>
-              <line x1="16" y1="3"  x2="16" y2="29"/>
-              <line x1="3"  y1="16" x2="29" y2="16"/>
-              <line x1="9"  y1="9"  x2="23" y2="23"/>
-              <line x1="23" y1="9"  x2="9"  y2="23"/>
-            </svg>
-          </div>
-          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">7 estudios</p>
-          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Radiografías</h3>
-          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Imágenes de alta definición para dientes, hueso y estructuras craneofaciales.</p>
-          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver estudios <span aria-hidden="true">→</span></span>
-        </a>
-
-        <!-- Tomografías -->
-        <a href="/tecnologia#tech-tomo" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
-          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" class="w-full h-full" aria-hidden="true">
-              <circle cx="16" cy="16" r="13"/>
-              <circle cx="16" cy="16" r="7"/>
-              <circle cx="16" cy="16" r="2.5"/>
-              <line x1="3"  y1="16" x2="9"  y2="16"/>
-              <line x1="23" y1="16" x2="29" y2="16"/>
-            </svg>
-          </div>
-          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">3 estudios</p>
-          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Tomografías</h3>
-          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Reconstrucción 3D de estructuras óseas para implantología y planificación quirúrgica.</p>
-          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver estudios <span aria-hidden="true">→</span></span>
-        </a>
-
-        <!-- Digital -->
-        <a href="/tecnologia#tech-digital" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
-          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
-              <path d="M6 11V7a1 1 0 0 1 1-1h4"/>
-              <path d="M6 21v4a1 1 0 0 0 1 1h4"/>
-              <path d="M26 11V7a1 1 0 0 0-1-1h-4"/>
-              <path d="M26 21v4a1 1 0 0 1-1 1h-4"/>
-              <line x1="6" y1="16" x2="26" y2="16"/>
-              <circle cx="16" cy="16" r="3.5"/>
-            </svg>
-          </div>
-          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">3 equipos</p>
-          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Tecnología Digital</h3>
-          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Scáner facial, scáner intraoral y diseño CAD/CAM para prótesis y sonrisa digital.</p>
-          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver equipos <span aria-hidden="true">→</span></span>
-        </a>
-
-        <!-- Laboratorio -->
-        <a href="/tecnologia#tech-lab" class="gsap-tech-home-card bg-white p-8 hover:bg-brand-soft transition-colors duration-300 group flex flex-col">
-          <div class="w-8 h-8 text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-300">
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full" aria-hidden="true">
-              <polyline points="2,16 7,16 10,8 13,24 16,16 19,16 21,20 24,11 27,16 30,16"/>
-            </svg>
-          </div>
-          <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-4">2 servicios</p>
-          <h3 class="font-serif text-2xl text-brand-teal mb-4 leading-none">Lab. & Cardiología</h3>
-          <p class="font-sans text-sm text-brand-teal/60 leading-relaxed flex-1">Laboratorio clínico y electrocardiógrafo: diagnóstico médico completo en un solo lugar.</p>
-          <span class="font-sans text-xs uppercase tracking-widest text-brand-accent mt-6 flex items-center gap-1 group-hover:gap-2 transition-all">Ver servicios <span aria-hidden="true">→</span></span>
-        </a>
-
+      <!-- 4 group cards — full-width horizontal strips with background images -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[2px] bg-white">
+        {techGroups.map((g) => (
+          <a
+            href={`/tecnologia#${g.anchor}`}
+            class="gsap-tech-home-card relative flex flex-col justify-end min-h-[380px] lg:min-h-[440px] overflow-hidden group bg-brand-teal bg-cover bg-center"
+            style={g.imgUrl ? { backgroundImage: `url('${g.imgUrl}')` } : undefined}
+          >
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-teal/95 via-brand-teal/55 to-brand-teal/10 group-hover:from-brand-teal/85 group-hover:via-brand-teal/40 group-hover:to-brand-teal/5 transition-all duration-500"></div>
+            <div class="relative z-10 p-8 lg:p-10 text-white">
+              {g.itemCount > 0 && (
+                <p class="font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-light mb-3">
+                  {g.itemCount} disponibles
+                </p>
+              )}
+              <h3 class="font-serif text-2xl lg:text-3xl text-white mb-3 leading-none">{g.label}</h3>
+              <p class="font-sans text-sm text-white/70 leading-relaxed line-clamp-3">{g.desc}</p>
+              <span class="font-sans text-xs uppercase tracking-widest text-brand-light mt-6 flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+                {g.ctaLabel}
+                <Icon name="ph:arrow-right-light" class="w-4 h-4 shrink-0" />
+              </span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -308,43 +267,57 @@ const schemaData = JSON.stringify({
       <h2 class="font-serif text-[2.5rem] sm:text-[3.5rem] md:text-[6rem] leading-[0.9] tracking-tighter mb-10 md:mb-20 text-brand-teal gsap-reviews-el">
         Lo que dicen<br /><span class="italic">nuestros pacientes.</span>
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <figure class="gsap-review-item flex flex-col">
-          <blockquote class="font-serif text-2xl leading-snug italic text-brand-teal mb-8 flex-1">
-            "Vine con miedo al dentista y salí con una sonrisa que no quiero esconder. El equipo de Odontomed es increíble."
-          </blockquote>
-          <figcaption class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-brand-teal flex items-center justify-center text-white font-serif font-bold text-lg">M</div>
-            <div>
-              <p class="font-sans text-sm font-bold text-brand-teal uppercase tracking-widest">María F.</p>
-              <p class="font-sans text-xs text-brand-teal/60 uppercase tracking-widest">Conocoto</p>
-            </div>
-          </figcaption>
-        </figure>
-        <figure class="gsap-review-item flex flex-col">
-          <blockquote class="font-serif text-2xl leading-snug italic text-brand-teal mb-8 flex-1">
-            "Me hicieron el diseño de sonrisa digital y quedé impresionado. Los implantes se ven completamente naturales."
-          </blockquote>
-          <figcaption class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-brand-accent flex items-center justify-center text-white font-serif font-bold text-lg">A</div>
-            <div>
-              <p class="font-sans text-sm font-bold text-brand-teal uppercase tracking-widest">Andrés R.</p>
-              <p class="font-sans text-xs text-brand-teal/60 uppercase tracking-widest">Valle de los Chillos</p>
-            </div>
-          </figcaption>
-        </figure>
-        <figure class="gsap-review-item flex flex-col">
-          <blockquote class="font-serif text-2xl leading-snug italic text-brand-teal mb-8 flex-1">
-            "Llevo a mis hijos desde pequeños. La atención en odontopediatría es excelente: pacientes, profesionales y muy amables."
-          </blockquote>
-          <figcaption class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center text-brand-teal font-serif font-bold text-lg">C</div>
-            <div>
-              <p class="font-sans text-sm font-bold text-brand-teal uppercase tracking-widest">Carolina V.</p>
-              <p class="font-sans text-xs text-brand-teal/60 uppercase tracking-widest">Quito</p>
-            </div>
-          </figcaption>
-        </figure>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {reviews.map((r) => {
+          const initial = r.name.charAt(0).toUpperCase()
+          const Card = r.link ? 'a' : 'figure'
+          return (
+            <figure class="gsap-review-item flex flex-col bg-white p-8 group">
+              <!-- Header: estrellas + logo Google -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex gap-0.5">
+                  {[1,2,3,4,5].map(() => (
+                    <Icon name="ph:star-fill" class="w-4 h-4 text-yellow-400" />
+                  ))}
+                </div>
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-label="Google" role="img">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+              </div>
+              <!-- Texto -->
+              <blockquote class="font-serif text-xl leading-snug italic text-brand-teal mb-8 flex-1 line-clamp-5">
+                "{r.body}"
+              </blockquote>
+              <!-- Footer: foto + nombre + link -->
+              <figcaption class="flex items-center justify-between gap-4 pt-6 border-t border-brand-teal/10">
+                <div class="flex items-center gap-3">
+                  {r.photoUrl ? (
+                    <img src={r.photoUrl} alt={r.name} class="w-10 h-10 rounded-full object-cover" loading="lazy" decoding="async" />
+                  ) : (
+                    <div class="w-10 h-10 rounded-full bg-brand-teal flex items-center justify-center text-white font-serif font-bold text-base shrink-0">
+                      {initial}
+                    </div>
+                  )}
+                  <p class="font-sans text-sm font-bold text-brand-teal uppercase tracking-widest">{r.name}</p>
+                </div>
+                {r.link && (
+                  <a
+                    href={r.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-sans text-[0.6rem] uppercase tracking-widest text-brand-accent/70 hover:text-brand-accent transition-colors shrink-0"
+                    aria-label={`Ver reseña de ${r.name} en Google`}
+                  >
+                    Ver reseña
+                  </a>
+                )}
+              </figcaption>
+            </figure>
+          )
+        })}
       </div>
     </div>
   </section>
@@ -375,10 +348,10 @@ const schemaData = JSON.stringify({
             </li>
           </ul>
           <div class="grid grid-cols-2 gap-4">
-            <a href="https://www.google.com/maps/place/ODONTOMED+S.A.S/@-0.3063063,-78.4876081,15z" target="_blank" rel="noopener noreferrer" class="border border-brand-teal text-brand-teal py-3 px-2 text-center text-xs uppercase tracking-widest hover:bg-brand-teal hover:text-white transition-all duration-300 rounded font-bold flex items-center justify-center gap-2">
+            <a href="https://www.google.com/maps/place/ODONTOMED+S.A.S/@-0.3063063,-78.4876081,15z" target="_blank" rel="noopener noreferrer" class="border border-brand-teal text-brand-teal py-3 px-2 text-center text-xs uppercase tracking-widest transition-transform duration-300 rounded font-bold flex items-center justify-center gap-2 transform hover:scale-105">
               Cómo llegar
             </a>
-            <a href="tel:0979286633" class="bg-brand-accent text-white py-3 px-2 text-center text-xs uppercase tracking-widest hover:bg-brand-teal transition-all duration-300 rounded font-bold flex items-center justify-center gap-2 shadow-md">
+            <a href="tel:0979286633" class="bg-brand-accent text-white py-3 px-2 text-center text-xs uppercase tracking-widest transition-transform duration-300 rounded font-bold flex items-center justify-center gap-2 shadow-md transform hover:scale-105">
               Llamar
             </a>
           </div>
@@ -391,7 +364,7 @@ const schemaData = JSON.stringify({
           width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           title="Ubicación de Odontomed en Conocoto, Quito"
-          class="filter grayscale group-hover:grayscale-0 transition-all duration-700"
+          class="transition-all duration-700"
         ></iframe>
       </div>
     </div>

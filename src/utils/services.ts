@@ -10,6 +10,13 @@ export interface ServiceBenefit {
   description?: string
 }
 
+export interface ServiceSpecialist {
+  _id:      string
+  name:     string
+  specialty: string
+  photoUrl: string | null
+}
+
 export interface SanityService {
   _id: string
   title: string
@@ -22,6 +29,7 @@ export interface SanityService {
   body?: any[]
   benefits?: ServiceBenefit[]
   whyUs?: string
+  specialists?: ServiceSpecialist[]
 }
 
 // ── Queries GROQ ─────────────────────────────────────────────────────────────
@@ -37,10 +45,10 @@ const SERVICES_QUERY = defineQuery(/* groq */ `
     group,
     desc,
     image,
-    externalImageUrl,
     body,
     benefits[] { _key, title, description },
-    whyUs
+    whyUs,
+    "specialists": specialists[]->{ _id, name, specialty, "photoUrl": photo.asset->url }
   }
 `)
 
@@ -53,10 +61,10 @@ const SERVICE_BY_SLUG_QUERY = defineQuery(/* groq */ `
     group,
     desc,
     image,
-    externalImageUrl,
     body,
     benefits[] { _key, title, description },
-    whyUs
+    whyUs,
+    "specialists": specialists[]->{ _id, name, specialty, "photoUrl": photo.asset->url }
   }
 `)
 
@@ -67,7 +75,7 @@ function resolveImgUrl(raw: any, w: number, h: number): string {
   if (raw.image?.asset) {
     return urlFor(raw.image).width(w).height(h).fit('crop').auto('format').url()
   }
-  return raw.externalImageUrl ?? ''
+  return ''
 }
 
 // ── Funciones públicas (con caché in-process) ─────────────────────────────

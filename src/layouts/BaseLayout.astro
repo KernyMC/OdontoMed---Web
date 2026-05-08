@@ -144,11 +144,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-m
         _ownTriggers.forEach((st) => st.kill());
         _ownTriggers = [];
 
-        // ── Reset navbar inline styles from previous scrub ────────────
+        // ── Reset navbar state from previous page ─────────────────────
         const navbar = document.getElementById('navbar');
         if (navbar) {
           navbar.removeAttribute('style');
-          navbar.classList.remove('scrolled');
+          navbar.classList.remove('scrolled', 'nav-pill');
         }
 
         // ── Apply initial navbar theme immediately (no flash) ──────────
@@ -173,38 +173,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-m
         // ── Scroll-based theme switching ───────────────────────────────
         initThemeTriggers();
 
-        // ── Scrubbed navbar — geometry tracks scroll proportionally ────
-        // scrub: 0.8 means the animation lags 0.8 s behind scroll speed.
-        // Both up and down feel identical because the animation is tied
-        // to position, not fired as a binary CSS class toggle.
+        // ── Navbar pill — toggle on first scroll, revert at top ───────
+        // CSS transition handles the animation; ScrollTrigger only flips the class.
         if (navbar) {
           _ownTriggers.push(ScrollTrigger.create({
-            start: 0,
-            end: 280,
-            scrub: 0.8,
-            onUpdate(self) {
-              const p = self.progress;
-
-              // Geometry
-              navbar.style.width         = `${100 - 10 * p}%`;
-              navbar.style.borderRadius  = `${9999 * p}px`;
-              navbar.style.top           = `${20 * p}px`;
-              navbar.style.paddingTop    = `${24 - 12 * p}px`;
-              navbar.style.paddingBottom = `${24 - 12 * p}px`;
-              navbar.style.paddingLeft   = `${24 + 8  * p}px`;
-              navbar.style.paddingRight  = `${24 + 8  * p}px`;
-
-              // Background: fades in from transparent → white
-              const alpha = Math.min(p * 1.4, 0.98);
-              navbar.style.backgroundColor = `rgba(255,255,255,${alpha})`;
-              navbar.style.borderColor     = `rgba(255,255,255,${Math.min(p * 1.4, 0.8)})`;
-              navbar.style.boxShadow       = p > 0.05
-                ? `0 10px 40px -10px rgba(0,0,0,${0.15 * p})`
-                : 'none';
-
-              // Colour classes flip at 70 % progress (navbar is clearly a pill by then)
-              navbar.classList.toggle('scrolled', p > 0.7);
-            },
+            start: 50,
+            onEnter()     { navbar.classList.add('nav-pill', 'scrolled'); },
+            onLeaveBack() { navbar.classList.remove('nav-pill', 'scrolled'); },
           }));
         }
       }

@@ -134,10 +134,27 @@ small { font-family: "Hanken Grotesk", Arial, sans-serif; font-size: 14px; }
   width: 100%;
   z-index: 50;
   padding: 1.5rem;
-  /* Promote to own layer — scrub updates background-color + geometry each tick */
   will-change: transform;
-  /* Only text colour uses CSS transition; geometry owned by GSAP scrub */
-  transition: color 0.4s ease-out;
+  transition:
+    color            0.4s ease-out,
+    width            0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius    0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    top              0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    padding          0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow       0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#navbar.nav-pill {
+  width: 90%;
+  border-radius: 9999px;
+  top: 20px;
+  padding-top:    12px;
+  padding-bottom: 12px;
+  padding-left:   32px;
+  padding-right:  32px;
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
 }
 
 /* Only text/colour overrides — geometry is owned by GSAP scrub */

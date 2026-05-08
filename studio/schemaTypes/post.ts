@@ -77,6 +77,13 @@ export default defineType({
       validation: (Rule) => Rule.required().max(200),
     }),
     defineField({
+      name: 'author',
+      title: 'Autor',
+      type: 'reference',
+      to: [{ type: 'specialist' }],
+      description: 'Doctor que escribe o avala el artículo.',
+    }),
+    defineField({
       name: 'intro',
       title: 'Párrafo de introducción',
       description: 'Lead paragraph con letra capitular al inicio del artículo.',

@@ -141,6 +141,43 @@ const whyUs = service.whyUs ||
     </div>
   </section>
 
+  <!-- ── Especialistas ──────────────────────────────────────────── -->
+  {service.specialists && service.specialists.length > 0 && (
+    <section class="py-20 px-6 lg:px-12 bg-brand-soft border-t border-brand-teal/10" data-color="soft">
+      <div class="max-w-[1600px] mx-auto">
+        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mb-6">
+          Nuestro equipo
+        </span>
+        <h2 class="font-serif text-[2rem] md:text-[3rem] leading-[0.9] tracking-tighter text-brand-teal mb-14">
+          Especialistas en <span class="italic">{service.category}</span>
+        </h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-10">
+          {service.specialists.map((s) => (
+            <div class="flex flex-col items-center text-center gap-4">
+              {s.photoUrl ? (
+                <img
+                  src={s.photoUrl}
+                  alt={s.name}
+                  class="w-24 h-24 rounded-full object-cover border-2 border-brand-light"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="w-24 h-24 rounded-full bg-brand-teal flex items-center justify-center text-white font-serif font-bold text-3xl border-2 border-brand-light">
+                  {s.name.charAt(0)}
+                </div>
+              )}
+              <div>
+                <p class="font-serif text-base text-brand-teal leading-snug">{s.name}</p>
+                <p class="font-sans text-[0.65rem] uppercase tracking-widest text-brand-accent mt-1">{s.specialty}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <Footer />
 </BaseLayout>
 

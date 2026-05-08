@@ -49,7 +49,8 @@ export const POST_QUERY = defineQuery(/* groq */ `
     intro,
     quote,
     image,
-    body[]{ ... }
+    body[]{ ... },
+    "author": author->{ _id, name, specialty, "photoUrl": photo.asset->url }
   }
 `)
 

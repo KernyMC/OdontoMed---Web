@@ -60,13 +60,6 @@ export default defineType({
       options: {hotspot: true},
       description: 'Imagen subida al Media Manager (recomendado).',
     }),
-    defineField({
-      name: 'externalImageUrl',
-      title: 'URL externa de imagen (fallback)',
-      type: 'url',
-      description: 'Usar solo si aún no hay imagen subida. Se ignora cuando existe "Imagen principal".',
-    }),
-
     // ── Contenido del procedimiento ──────────────────────────
     defineField({
       name: 'body',
@@ -119,6 +112,15 @@ export default defineType({
         }),
       ],
       validation: (Rule) => Rule.max(6),
+    }),
+
+    // ── Especialistas ────────────────────────────────────────
+    defineField({
+      name: 'specialists',
+      title: 'Especialistas',
+      type: 'array',
+      description: 'Doctores que atienden este servicio.',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'specialist' }] })],
     }),
 
     // ── Orden ────────────────────────────────────────────────

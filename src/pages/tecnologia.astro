@@ -1,13 +1,15 @@
 ---
-import BaseLayout        from '../layouts/BaseLayout.astro';
-import Navbar            from '../components/Navbar.astro';
-import Footer            from '../components/Footer.astro';
-import { technology, technologyGroups } from '../data/technology';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar     from '../components/Navbar.astro';
+import Footer     from '../components/Footer.astro';
+import { getTechGroups, getTechItems } from '../utils/technology';
 
-const rxItems      = technology.filter((t) => t.group === 'radiografia');
-const tomoItems    = technology.filter((t) => t.group === 'tomografia');
-const digitalItems = technology.filter((t) => t.group === 'digital');
-const labItems     = technology.filter((t) => t.group === 'laboratorio');
+const [resolvedGroups, items] = await Promise.all([getTechGroups(), getTechItems()]);
+
+const resolvedByGroup = (key: string) => items.filter((i) => i.group === key);
+
+const sectionBg    = ['bg-white', 'bg-brand-soft', 'bg-white', 'bg-brand-teal']
+const sectionTheme = ['light',    'soft',           'light',    'dark'          ]
 ---
 
 <BaseLayout
@@ -40,181 +42,68 @@ const labItems     = technology.filter((t) => t.group === 'laboratorio');
 
       <!-- Stats row -->
       <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px border border-white/10 gsap-tech-hero-el">
-        <div class="bg-white/5 px-8 py-6">
-          <p class="font-serif text-[2.5rem] leading-none text-white">7</p>
-          <p class="font-sans text-xs uppercase tracking-widest text-white/50 mt-2">Radiografías</p>
-        </div>
-        <div class="bg-white/5 px-8 py-6">
-          <p class="font-serif text-[2.5rem] leading-none text-white">3</p>
-          <p class="font-sans text-xs uppercase tracking-widest text-white/50 mt-2">Tomografías</p>
-        </div>
-        <div class="bg-white/5 px-8 py-6">
-          <p class="font-serif text-[2.5rem] leading-none text-white">3</p>
-          <p class="font-sans text-xs uppercase tracking-widest text-white/50 mt-2">Tecnología Digital</p>
-        </div>
-        <div class="bg-white/5 px-8 py-6">
-          <p class="font-serif text-[2.5rem] leading-none text-white">2</p>
-          <p class="font-sans text-xs uppercase tracking-widest text-white/50 mt-2">Lab. & Cardiología</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Radiografías ─────────────────────────────────────────────────── -->
-  <section id="tech-rx" class="py-24 lg:py-32 px-6 lg:px-12 bg-white" data-color="light">
-    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
-
-      <!-- Group heading -->
-      <div class="w-full lg:w-1/3 gsap-group-meta">
-        <div class="w-10 h-10 text-brand-accent mb-8">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-            <rect x="3" y="3" width="26" height="26" rx="1.5"/>
-            <line x1="16" y1="3"  x2="16" y2="29"/>
-            <line x1="3"  y1="16" x2="29" y2="16"/>
-            <line x1="9"  y1="9"  x2="23" y2="23"/>
-            <line x1="23" y1="9"  x2="9"  y2="23"/>
-          </svg>
-        </div>
-        <h2 class="font-serif text-[3rem] md:text-[4.5rem] leading-[0.88] tracking-tighter text-brand-teal mb-6">
-          {technologyGroups.radiografia.label}
-        </h2>
-        <p class="font-sans text-base leading-relaxed text-brand-teal/65 max-w-xs">
-          {technologyGroups.radiografia.desc}
-        </p>
-        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mt-8">
-          {rxItems.length} estudios disponibles
-        </span>
-      </div>
-
-      <!-- Items grid -->
-      <div class="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10 content-start">
-        {rxItems.map((item) => (
-          <div class="gsap-tech-item border-t border-brand-accent/20 pt-6">
-            <h3 class="font-serif text-xl leading-snug text-brand-teal mb-3">{item.title}</h3>
-            <p class="font-sans text-sm leading-relaxed text-brand-teal/60">{item.desc}</p>
+        {resolvedGroups.map((g) => (
+          <div class="bg-white/5 px-8 py-6">
+            <p class="font-serif text-[2.5rem] leading-none text-white">{g.itemCount}</p>
+            <p class="font-sans text-xs uppercase tracking-widest text-white/50 mt-2">{g.label}</p>
           </div>
         ))}
       </div>
-
     </div>
   </section>
 
-  <!-- ── Tomografías ───────────────────────────────────────────────────── -->
-  <section id="tech-tomo" class="py-24 lg:py-32 px-6 lg:px-12 bg-brand-soft" data-color="soft">
-    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
+  <!-- ── Grupos (dinámico desde Sanity) ───────────────────────────────── -->
+  {resolvedGroups.map((g, i) => {
+    const reversed  = i % 2 !== 0
+    const dark      = i === resolvedGroups.length - 1
+    const bg        = sectionBg[i]    ?? 'bg-white'
+    const theme     = sectionTheme[i] ?? 'light'
+    const textMain  = dark ? 'text-white'       : 'text-brand-teal'
+    const textMuted = dark ? 'text-white/60'    : 'text-brand-teal/60'
+    const border    = dark ? 'border-white/20'  : 'border-brand-accent/20'
+    return (
+      <section id={g.anchor} class={`overflow-hidden ${bg}`} data-color={theme} data-tech-section>
+        <div class={`max-w-[1600px] mx-auto flex flex-col ${reversed ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
 
-      <!-- Group heading -->
-      <div class="w-full lg:w-1/3 gsap-group-meta">
-        <div class="w-10 h-10 text-brand-accent mb-8">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" class="w-full h-full">
-            <circle cx="16" cy="16" r="13"/>
-            <circle cx="16" cy="16" r="7"/>
-            <circle cx="16" cy="16" r="2.5"/>
-            <line x1="3"  y1="16" x2="9"  y2="16"/>
-            <line x1="23" y1="16" x2="29" y2="16"/>
-          </svg>
-        </div>
-        <h2 class="font-serif text-[3rem] md:text-[4.5rem] leading-[0.88] tracking-tighter text-brand-teal mb-6">
-          {technologyGroups.tomografia.label}
-        </h2>
-        <p class="font-sans text-base leading-relaxed text-brand-teal/65 max-w-xs">
-          {technologyGroups.tomografia.desc}
-        </p>
-        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mt-8">
-          {tomoItems.length} estudios disponibles
-        </span>
-      </div>
-
-      <!-- Items grid -->
-      <div class="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-x-10 gap-y-10 content-start">
-        {tomoItems.map((item) => (
-          <div class="gsap-tech-item border-t border-brand-accent/20 pt-6">
-            <h3 class="font-serif text-xl leading-snug text-brand-teal mb-3">{item.title}</h3>
-            <p class="font-sans text-sm leading-relaxed text-brand-teal/60">{item.desc}</p>
+          <!-- Columna imagen: foto + gradient + título y descripción superpuestos abajo -->
+          <div class="w-full lg:w-[42%] shrink-0 relative min-h-[420px] lg:min-h-[560px] overflow-hidden gsap-group-meta">
+            {g.imgUrl && (
+              <img
+                src={g.imgUrl}
+                alt={g.label}
+                class="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-teal/95 via-brand-teal/40 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-8 lg:p-12 text-white">
+              <span class="block font-sans text-[0.6rem] uppercase tracking-[0.3em] font-semibold text-brand-light mb-4">
+                {g.itemCount} disponibles
+              </span>
+              <h2 class="font-serif text-[2.2rem] md:text-[3rem] lg:text-[3.5rem] leading-[0.88] tracking-tighter text-white mb-4">
+                {g.label}
+              </h2>
+              <p class="font-sans text-sm leading-relaxed text-white/80 max-w-xs">
+                {g.desc}
+              </p>
+            </div>
           </div>
-        ))}
-      </div>
 
-    </div>
-  </section>
-
-  <!-- ── Tecnología Digital ─────────────────────────────────────────────── -->
-  <section id="tech-digital" class="py-24 lg:py-32 px-6 lg:px-12 bg-white" data-color="light">
-    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
-
-      <!-- Group heading -->
-      <div class="w-full lg:w-1/3 gsap-group-meta">
-        <div class="w-10 h-10 text-brand-accent mb-8">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-            <path d="M6 11V7a1 1 0 0 1 1-1h4"/>
-            <path d="M6 21v4a1 1 0 0 0 1 1h4"/>
-            <path d="M26 11V7a1 1 0 0 0-1-1h-4"/>
-            <path d="M26 21v4a1 1 0 0 1-1 1h-4"/>
-            <line x1="6" y1="16" x2="26" y2="16"/>
-            <circle cx="16" cy="16" r="3.5"/>
-          </svg>
-        </div>
-        <h2 class="font-serif text-[3rem] md:text-[4.5rem] leading-[0.88] tracking-tighter text-brand-teal mb-6">
-          {technologyGroups.digital.label}
-        </h2>
-        <p class="font-sans text-base leading-relaxed text-brand-teal/65 max-w-xs">
-          {technologyGroups.digital.desc}
-        </p>
-        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-accent mt-8">
-          {digitalItems.length} equipos disponibles
-        </span>
-      </div>
-
-      <!-- Items grid -->
-      <div class="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-x-10 gap-y-10 content-start">
-        {digitalItems.map((item) => (
-          <div class="gsap-tech-item border-t border-brand-accent/20 pt-6">
-            <h3 class="font-serif text-xl leading-snug text-brand-teal mb-3">{item.title}</h3>
-            <p class="font-sans text-sm leading-relaxed text-brand-teal/60">{item.desc}</p>
+          <!-- Columna ítems -->
+          <div class={`flex-1 py-20 lg:py-28 px-8 lg:px-16 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 content-start`}>
+            {resolvedByGroup(g.key).map((item) => (
+              <div class={`gsap-tech-item border-t ${border} pt-6`}>
+                <h3 class={`font-serif text-lg leading-snug ${textMain} mb-2`}>{item.title}</h3>
+                <p class={`font-sans text-sm leading-relaxed ${textMuted}`}>{item.desc}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-    </div>
-  </section>
-
-  <!-- ── Laboratorio & Cardiología ──────────────────────────────────────── -->
-  <section id="tech-lab" class="py-24 lg:py-32 px-6 lg:px-12 bg-brand-teal text-white" data-color="dark">
-    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
-
-      <!-- Group heading -->
-      <div class="w-full lg:w-1/3 gsap-group-meta">
-        <div class="w-10 h-10 text-brand-light mb-8">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-            <polyline points="2,16 7,16 10,8 13,24 16,16 19,16 21,20 24,11 27,16 30,16"/>
-          </svg>
         </div>
-        <h2 class="font-serif text-[3rem] md:text-[4.5rem] leading-[0.88] tracking-tighter text-white mb-6">
-          {technologyGroups.laboratorio.label}
-        </h2>
-        <p class="font-sans text-base leading-relaxed text-white/60 max-w-xs">
-          {technologyGroups.laboratorio.desc}
-        </p>
-        <span class="block font-sans text-[0.65rem] uppercase tracking-[0.3em] font-semibold text-brand-light mt-8">
-          {labItems.length} servicios disponibles
-        </span>
-        <p class="font-sans text-xs text-white/40 mt-4 max-w-xs leading-relaxed">
-          El laboratorio clínico y el electrocardiógrafo son el diferencial que nos convierte en una clínica de salud integral, no solo dental.
-        </p>
-      </div>
-
-      <!-- Items grid -->
-      <div class="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10 content-start">
-        {labItems.map((item) => (
-          <div class="gsap-tech-item border-t border-white/20 pt-6">
-            <h3 class="font-serif text-2xl leading-snug text-white mb-4">{item.title}</h3>
-            <p class="font-sans text-sm leading-relaxed text-white/60">{item.desc}</p>
-          </div>
-        ))}
-      </div>
-
-    </div>
-  </section>
+      </section>
+    )
+  })}
 
   <!-- ── CTA ───────────────────────────────────────────────────────────── -->
   <section class="py-24 px-6 lg:px-12 bg-brand-soft border-t border-brand-teal/10" data-color="soft">
@@ -238,12 +127,6 @@ const labItems     = technology.filter((t) => t.group === 'laboratorio');
         >
           WhatsApp
         </a>
-        <a
-          href="/contacto"
-          class="border border-brand-teal text-brand-teal px-10 py-4 text-sm uppercase tracking-widest hover:bg-brand-teal hover:text-white transition-colors duration-300 font-bold text-center"
-        >
-          Contacto
-        </a>
       </div>
     </div>
   </section>
@@ -266,10 +149,7 @@ const labItems     = technology.filter((t) => t.group === 'laboratorio');
     );
 
     // Group sections
-    ['rx', 'tomo', 'digital', 'lab'].forEach((key) => {
-      const section = document.querySelector('#tech-' + key);
-      if (!section) return;
-
+    document.querySelectorAll('[data-tech-section]').forEach((section) => {
       gsap.fromTo(section.querySelectorAll('.gsap-group-meta > *'),
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out',
