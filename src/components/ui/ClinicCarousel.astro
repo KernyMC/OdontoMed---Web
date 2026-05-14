@@ -1,9 +1,9 @@
 ---
 /**
  * ClinicCarousel.astro
- * Carrusel con efecto "center-focused": slide activo centrado,
- * slides adyacentes asoman a los lados. PREV/NEXT sobre los lados.
- * Swipe táctil incluido. Reutilizable — acepta cualquier array de fotos.
+ * Carrusel center-focused. Clic en slide activo → lightbox.
+ * Clic en slide lateral → navega a ese slide.
+ * Swipe táctil, dots, PREV/NEXT. Reutilizable.
  */
 
 interface Photo {
@@ -29,30 +29,41 @@ const { photos } = Astro.props
   <!-- Track -->
   <div id="carousel-track" class="flex" style="gap: 1.25rem">
     {photos.map((p, i) => (
-      <div
-        class="carousel-slide flex-shrink-0 w-[82%] sm:w-[66%] lg:w-[58%] rounded-2xl overflow-hidden relative bg-brand-teal/10"
+      <button
+        type="button"
+        class="carousel-slide flex-shrink-0 w-[82%] sm:w-[66%] lg:w-[58%] rounded-2xl overflow-hidden relative bg-brand-teal/10 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
         aria-roledescription="diapositiva"
         aria-label={p.label}
         aria-hidden={i !== 0 ? 'true' : 'false'}
+        data-index={i}
+        data-photo-url={p.photoUrl}
+        data-photo-label={p.label}
       >
-        <div class="aspect-[4/3] sm:aspect-video relative">
+        <div class="aspect-[4/3] sm:aspect-video relative w-full">
           <img
             src={p.photoUrl}
             alt={p.label}
-            class="absolute inset-0 w-full h-full object-cover"
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
             loading={i < 2 ? 'eager' : 'lazy'}
             decoding="async"
           />
-          <!-- Gradiente inferior para legibilidad del label -->
+          <!-- Gradiente -->
           <div
             class="absolute inset-0 pointer-events-none"
             style="background: linear-gradient(to top, rgba(34,74,79,0.72) 0%, transparent 52%)"
           />
+          <!-- Icono expandir — solo visible en slide activo via JS -->
+          <div class="carousel-expand-icon absolute top-4 right-4 opacity-0 transition-opacity duration-300 bg-black/30 backdrop-blur-sm rounded-full p-2" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+            </svg>
+          </div>
           <!-- Label -->
           <p class="absolute bottom-11 sm:bottom-12 left-0 right-0 text-center font-sans text-xs sm:text-sm text-white font-semibold tracking-wide px-6">
             {p.label}
           </p>
-          <!-- Dots — solo visibles en el slide activo via JS -->
+          <!-- Dots -->
           <div class="carousel-dots-slot absolute bottom-4 sm:bottom-5 left-0 right-0 flex justify-center gap-[6px] pointer-events-none" aria-hidden="true">
             {photos.map((_, di) => (
               <span
@@ -63,7 +74,7 @@ const { photos } = Astro.props
             ))}
           </div>
         </div>
-      </div>
+      </button>
     ))}
   </div>
 
@@ -73,13 +84,16 @@ const { photos } = Astro.props
     type="button"
     aria-label="Imagen anterior"
     class="absolute left-[4%] sm:left-[6.5%] top-1/2 -translate-y-1/2 z-20
-           border border-white/65 text-white font-sans
-           text-[0.5rem] uppercase tracking-[0.22em]
-           px-[10px] py-[6px]
-           hover:bg-white/12 transition-colors duration-200
+           border border-white/65 text-white
+           w-9 h-9 flex items-center justify-center
+           hover:bg-white/10 transition-colors duration-200
            focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
   >
-    Prev
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6"/>
+    </svg>
   </button>
 
   <!-- NEXT -->
@@ -88,29 +102,108 @@ const { photos } = Astro.props
     type="button"
     aria-label="Imagen siguiente"
     class="absolute right-[4%] sm:right-[6.5%] top-1/2 -translate-y-1/2 z-20
-           border border-white/65 text-white font-sans
-           text-[0.5rem] uppercase tracking-[0.22em]
-           px-[10px] py-[6px]
-           hover:bg-white/12 transition-colors duration-200
+           border border-white/65 text-white
+           w-9 h-9 flex items-center justify-center
+           hover:bg-white/10 transition-colors duration-200
            focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
   >
-    Next
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 18l6-6-6-6"/>
+    </svg>
   </button>
 </div>
 
-<script is:inline>
+<!-- Lightbox -->
+<dialog
+  id="carousel-lightbox"
+  class="fixed inset-0 w-full h-full max-w-none max-h-none bg-transparent p-0 m-0 backdrop:bg-black/85 backdrop:backdrop-blur-sm"
+>
+  <div
+    id="carousel-lb-backdrop"
+    class="w-full h-full flex flex-col items-center justify-center p-4 sm:p-10"
+  >
+    <div class="relative w-full max-w-5xl">
+      <img
+        id="carousel-lb-img"
+        src=""
+        alt=""
+        class="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
+      <p
+        id="carousel-lb-label"
+        class="mt-4 text-center font-sans text-xs uppercase tracking-widest text-white/60"
+      ></p>
+    </div>
+    <!-- Flechas dentro del lightbox -->
+    <div class="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2">
+      <button
+        id="lb-prev"
+        type="button"
+        aria-label="Imagen anterior"
+        class="border border-white/50 text-white w-10 h-10 flex items-center justify-center hover:bg-white/10 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+    </div>
+    <div class="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2">
+      <button
+        id="lb-next"
+        type="button"
+        aria-label="Imagen siguiente"
+        class="border border-white/50 text-white w-10 h-10 flex items-center justify-center hover:bg-white/10 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <!-- Cerrar -->
+  <button
+    id="carousel-lb-close"
+    type="button"
+    aria-label="Cerrar"
+    class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors p-1"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 6L6 18M6 6l12 12"/>
+    </svg>
+  </button>
+</dialog>
+
+<script is:inline define:vars={{ photos }}>
 document.addEventListener('astro:page-load', () => {
-  const outer   = document.getElementById('clinic-carousel')
-  const track   = document.getElementById('carousel-track')
-  const slides  = outer?.querySelectorAll('.carousel-slide')
-  const prevBtn = document.getElementById('carousel-prev')
-  const nextBtn = document.getElementById('carousel-next')
+  const outer    = document.getElementById('clinic-carousel')
+  const track    = document.getElementById('carousel-track')
+  const slides   = outer?.querySelectorAll('.carousel-slide')
+  const prevBtn  = document.getElementById('carousel-prev')
+  const nextBtn  = document.getElementById('carousel-next')
+  const lightbox = document.getElementById('carousel-lightbox')
+  const lbImg    = document.getElementById('carousel-lb-img')
+  const lbLabel  = document.getElementById('carousel-lb-label')
+  const lbClose  = document.getElementById('carousel-lb-close')
+  const lbBack   = document.getElementById('carousel-lb-backdrop')
+  const lbPrev   = document.getElementById('lb-prev')
+  const lbNext   = document.getElementById('lb-next')
 
   if (!outer || !track || !slides?.length) return
 
-  let current = 0
-  const total = slides.length
-  const GAP   = 20 // 1.25rem
+  let current  = 0
+  let lbCurrent = 0
+  const total  = slides.length
+  const GAP    = 20
+
+  // ── Carrusel ──────────────────────────────────────────────────────────────
 
   function calcOffset(index) {
     const ow = outer.offsetWidth
@@ -119,17 +212,14 @@ document.addEventListener('astro:page-load', () => {
   }
 
   function updateDots(active) {
-    // Actualiza los puntos en TODOS los slides (todos tienen la misma lista)
     outer.querySelectorAll('.carousel-dot-inner').forEach((dot) => {
       const di = parseInt(dot.dataset.di, 10)
       if (di === active) {
         dot.style.background = 'rgba(255,255,255,0.92)'
-        dot.style.width      = '8px'
-        dot.style.height     = '8px'
+        dot.style.width = '8px'; dot.style.height = '8px'
       } else {
         dot.style.background = 'rgba(255,255,255,0.32)'
-        dot.style.width      = '7px'
-        dot.style.height     = '7px'
+        dot.style.width = '7px'; dot.style.height = '7px'
       }
     })
   }
@@ -138,12 +228,15 @@ document.addEventListener('astro:page-load', () => {
     current = ((index % total) + total) % total
     track.style.transform = `translateX(${calcOffset(current)}px)`
     updateDots(current)
-    slides.forEach((s, i) =>
-      s.setAttribute('aria-hidden', String(i !== current))
-    )
+    slides.forEach((s, i) => {
+      const isActive = i === current
+      s.setAttribute('aria-hidden', String(!isActive))
+      const icon = s.querySelector('.carousel-expand-icon')
+      if (icon) icon.style.opacity = isActive ? '1' : '0'
+      s.style.cursor = isActive ? 'zoom-in' : 'pointer'
+    })
   }
 
-  // Init sin animación
   track.style.transition = 'none'
   goTo(0)
   requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -153,35 +246,82 @@ document.addEventListener('astro:page-load', () => {
   prevBtn?.addEventListener('click', () => goTo(current - 1))
   nextBtn?.addEventListener('click', () => goTo(current + 1))
 
-  // Clic en dots de cualquier slide
   outer.querySelectorAll('.carousel-dot-inner').forEach((dot) => {
-    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.di, 10)))
     dot.style.cursor = 'pointer'
     dot.style.pointerEvents = 'auto'
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.di, 10)))
   })
 
-  // Swipe táctil
-  let tx = 0, ty = 0, swiping = false
+  // ── Swipe táctil ─────────────────────────────────────────────────────────
+
+  let tx = 0, ty = 0, swiped = false
 
   outer.addEventListener('touchstart', (e) => {
     tx = e.touches[0].clientX
     ty = e.touches[0].clientY
-    swiping = false
+    swiped = false
   }, { passive: true })
 
   outer.addEventListener('touchmove', (e) => {
     const dx = Math.abs(e.touches[0].clientX - tx)
     const dy = Math.abs(e.touches[0].clientY - ty)
-    if (dx > dy && dx > 8) swiping = true
+    if (dx > dy && dx > 8) swiped = true
   }, { passive: true })
 
   outer.addEventListener('touchend', (e) => {
-    if (!swiping) return
+    if (!swiped) return
     const delta = e.changedTouches[0].clientX - tx
     if (Math.abs(delta) > 48) delta < 0 ? goTo(current + 1) : goTo(current - 1)
   }, { passive: true })
 
-  // Resize
+  // ── Clic en slides ────────────────────────────────────────────────────────
+
+  slides.forEach((slide, i) => {
+    let pointerMoved = false
+    slide.addEventListener('pointerdown', () => { pointerMoved = false })
+    slide.addEventListener('pointermove', () => { pointerMoved = true })
+    slide.addEventListener('click', () => {
+      if (pointerMoved || swiped) return
+      if (i !== current) { goTo(i); return }
+      openLightbox(current)
+    })
+  })
+
+  // ── Lightbox ──────────────────────────────────────────────────────────────
+
+  function openLightbox(index) {
+    lbCurrent = ((index % total) + total) % total
+    renderLb()
+    lightbox.showModal()
+    document.body.style.overflow = 'hidden'
+  }
+
+  function renderLb() {
+    const p = photos[lbCurrent]
+    lbImg.src   = p.photoUrl
+    lbImg.alt   = p.label
+    lbLabel.textContent = p.label
+  }
+
+  function closeLightbox() {
+    lightbox.close()
+    lbImg.src = ''
+    document.body.style.overflow = ''
+  }
+
+  lbClose?.addEventListener('click', closeLightbox)
+  lbBack?.addEventListener('click', (e) => { if (e.target === lbBack) closeLightbox() })
+  lightbox?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox()
+    if (e.key === 'ArrowLeft')  { lbCurrent = ((lbCurrent - 1 + total) % total); renderLb() }
+    if (e.key === 'ArrowRight') { lbCurrent = (lbCurrent + 1) % total; renderLb() }
+  })
+
+  lbPrev?.addEventListener('click', () => { lbCurrent = ((lbCurrent - 1 + total) % total); renderLb() })
+  lbNext?.addEventListener('click', () => { lbCurrent = (lbCurrent + 1) % total; renderLb() })
+
+  // ── Resize ────────────────────────────────────────────────────────────────
+
   let rTimer
   window.addEventListener('resize', () => {
     clearTimeout(rTimer)
