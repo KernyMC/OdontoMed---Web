@@ -1,0 +1,174 @@
+---
+/**
+ * SpecialistModal.astro
+ * Pop-up reutilizable para mostrar el perfil de un especialista.
+ *
+ * Uso:
+ *   <SpecialistModal specialists={service.specialists} />
+ *
+ * Cada tarjeta de especialista fuera del modal debe tener:
+ *   data-specialist-id="{s._id}"
+ * El script interno maneja apertura / cierre.
+ */
+
+export interface Specialist {
+  _id:          string
+  name:         string
+  specialty:    string
+  photoUrl?:    string | null
+  description?: string
+}
+
+interface Props {
+  specialists: Specialist[]
+}
+
+const { specialists } = Astro.props
+---
+
+<!-- Dialog accesible — nativo, sin librerías extra -->
+<dialog
+  id="specialist-modal"
+  class="fixed inset-0 w-full h-full max-w-none max-h-none bg-transparent p-0 m-0 backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+  aria-modal="true"
+  aria-labelledby="modal-specialist-name"
+>
+  <div
+    class="w-full h-full flex items-center justify-center p-4 sm:p-8"
+    id="specialist-modal-backdrop"
+  >
+    <div
+      class="relative bg-white w-full max-w-2xl max-h-[700px] overflow-hidden flex flex-col sm:flex-row rounded-2xl shadow-2xl"
+      role="document"
+    >
+
+      <!-- Foto — lado izquierdo -->
+      <div class="w-full sm:w-[42%] shrink-0 bg-brand-teal relative overflow-hidden"
+           style="min-height: 260px">
+        <img
+          id="modal-photo"
+          src=""
+          alt=""
+          class="absolute inset-0 w-full h-full object-cover object-top"
+          loading="lazy"
+          decoding="async"
+        />
+        <!-- Fallback inicial (letra) -->
+        <div
+          id="modal-photo-fallback"
+          class="absolute inset-0 flex items-center justify-center"
+          aria-hidden="true"
+        >
+          <span id="modal-initial" class="font-serif font-bold text-[6rem] text-white/20 select-none"></span>
+        </div>
+      </div>
+
+      <!-- Info — lado derecho -->
+      <div class="flex flex-col justify-center p-8 sm:p-10 overflow-y-auto">
+
+        <span
+          id="modal-specialty"
+          class="block font-sans text-[0.6rem] uppercase tracking-[0.3em] text-brand-accent font-semibold mb-3"
+        ></span>
+
+        <h2
+          id="modal-specialist-name"
+          class="font-serif text-[2rem] sm:text-[2.4rem] leading-[0.95] tracking-tighter text-brand-teal mb-5"
+        ></h2>
+
+        <div
+          id="modal-description-wrap"
+          class="hidden"
+        >
+          <div class="w-8 h-[2px] bg-brand-accent mb-5"></div>
+          <p
+            id="modal-description"
+            class="font-sans text-sm leading-relaxed text-brand-teal/70"
+          ></p>
+        </div>
+
+      </div>
+
+      <!-- Botón cerrar -->
+      <button
+        id="specialist-modal-close"
+        type="button"
+        class="absolute top-4 right-4 text-brand-teal/50 hover:text-brand-teal transition-colors bg-white/80 rounded-full p-1.5 z-10"
+        aria-label="Cerrar"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</dialog>
+
+<!-- Datos embebidos como JSON para que el script los lea sin fetch extra -->
+<script is:inline define:vars={{ specialists }}>
+  document.addEventListener('astro:page-load', () => {
+    const modal    = document.getElementById('specialist-modal')
+    const photo    = document.getElementById('modal-photo')
+    const fallback = document.getElementById('modal-photo-fallback')
+    const initial  = document.getElementById('modal-initial')
+    const name     = document.getElementById('modal-specialist-name')
+    const specialty = document.getElementById('modal-specialty')
+    const descWrap = document.getElementById('modal-description-wrap')
+    const desc     = document.getElementById('modal-description')
+    const closeBtn = document.getElementById('specialist-modal-close')
+    const backdrop = document.getElementById('specialist-modal-backdrop')
+
+    if (!modal) return
+
+    const dataMap = {}
+    for (const s of specialists) dataMap[s._id] = s
+
+    function openModal(id) {
+      const s = dataMap[id]
+      if (!s) return
+
+      name.textContent     = s.name
+      specialty.textContent = s.specialty ?? ''
+      initial.textContent  = s.name.charAt(0)
+
+      if (s.photoUrl) {
+        photo.src = s.photoUrl
+        photo.alt = s.name
+        photo.classList.remove('hidden')
+        fallback.classList.add('hidden')
+      } else {
+        photo.src = ''
+        photo.classList.add('hidden')
+        fallback.classList.remove('hidden')
+      }
+
+      if (s.description) {
+        desc.textContent = s.description
+        descWrap.classList.remove('hidden')
+      } else {
+        descWrap.classList.add('hidden')
+      }
+
+      modal.showModal()
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeModal() {
+      modal.close()
+      photo.src = ''
+      document.body.style.overflow = ''
+    }
+
+    // Delegar en todos los triggers del DOM
+    document.querySelectorAll('[data-specialist-id]').forEach((btn) => {
+      btn.addEventListener('click', () => openModal(btn.dataset.specialistId))
+    })
+
+    closeBtn?.addEventListener('click', closeModal)
+    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) closeModal() })
+    modal?.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal() })
+  })
+</script>

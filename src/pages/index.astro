@@ -6,13 +6,17 @@ import ServiceCard from '../components/ui/ServiceCard.astro';
 import { getServices } from '../utils/services';
 import { getTechGroups } from '../utils/technology';
 import { getReviews } from '../utils/reviews';
+import { getSiteSettings } from '../lib/settings';
 import { Icon } from 'astro-icon/components';
 
-const allServices      = await getServices();
-const featuredServices = allServices.slice(0, 4);
+const [allServices, techGroups, reviews, settings] = await Promise.all([
+  getServices(),
+  getTechGroups(),
+  getReviews(),
+  getSiteSettings(),
+]);
 
-const techGroups = await getTechGroups();
-const reviews    = await getReviews();
+const featuredServices = allServices.slice(0, 4);
 
 
 const schemaData = JSON.stringify({
@@ -66,7 +70,10 @@ const schemaData = JSON.stringify({
         "bestRating": "5"
       },
       "sameAs": [
-        "https://www.google.com/maps/place/ODONTOMED+S.A.S/@-0.3063063,-78.4876081,15z"
+        "https://www.google.com/maps/place/ODONTOMED+S.A.S/@-0.3063063,-78.4876081,15z",
+        ...(settings.instagram ? [settings.instagram] : []),
+        ...(settings.facebook  ? [settings.facebook]  : []),
+        ...(settings.tiktok    ? [settings.tiktok]    : []),
       ]
     },
     {

@@ -22,26 +22,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'category',
-      title: 'Categoría',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Clínica actual', value: 'actual' },
-          { title: 'Historia / Inicios', value: 'historia' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'actual',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'year',
-      title: 'Año (solo para fotos históricas)',
-      type: 'string',
-      description: 'Ej: 1976, 1985. Aparece como etiqueta bajo la foto.',
-    }),
-    defineField({
       name: 'order',
       title: 'Orden de aparición',
       type: 'number',
@@ -49,13 +29,9 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: 'label', subtitle: 'category', media: 'photo' },
-    prepare({ title, subtitle, media }) {
-      return {
-        title,
-        subtitle: subtitle === 'actual' ? 'Clínica actual' : 'Historia',
-        media,
-      }
+    select: { title: 'label', media: 'photo' },
+    prepare({ title, media }) {
+      return { title, subtitle: 'Clínica actual', media }
     },
   },
   orderings: [

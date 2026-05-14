@@ -46,9 +46,11 @@ export const POST_QUERY = defineQuery(/* groq */ `
     readTime,
     excerpt,
     publishedAt,
+    _updatedAt,
     intro,
     quote,
     image,
+    seo { metaTitle, metaDescription },
     body[]{ ... },
     "author": author->{ _id, name, specialty, "photoUrl": photo.asset->url }
   }

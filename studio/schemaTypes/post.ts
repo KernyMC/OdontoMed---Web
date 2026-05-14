@@ -98,6 +98,30 @@ export default defineType({
       rows: 2,
     }),
     defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      description: 'Controla cómo aparece este artículo en Google. Si están vacíos, se usan el título y el extracto.',
+      options: {collapsible: true, collapsed: true},
+      fields: [
+        defineField({
+          name: 'metaTitle',
+          title: 'Meta título',
+          type: 'string',
+          description: 'Máx. 60 caracteres.',
+          validation: (Rule) => Rule.max(60),
+        }),
+        defineField({
+          name: 'metaDescription',
+          title: 'Meta descripción',
+          type: 'text',
+          rows: 3,
+          description: 'Máx. 160 caracteres.',
+          validation: (Rule) => Rule.max(160),
+        }),
+      ],
+    }),
+    defineField({
       name: 'body',
       title: 'Contenido del artículo',
       description: 'Usa la barra de herramientas para agregar títulos, negritas, listas e imágenes.',

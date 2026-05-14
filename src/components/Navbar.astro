@@ -34,6 +34,34 @@ function isActive(href: string) {
         <a href="/servicios"  class={`nav-link ${isActive('/servicios')  ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Servicios</a>
         <a href="/tecnologia" class={`nav-link ${isActive('/tecnologia') ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Tecnología</a>
         <a href="/blog"       class={`nav-link ${isActive('/blog')       ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>Blog</a>
+
+        <!-- Language switcher — desktop -->
+        <div class="relative" id="lang-switcher-desktop">
+          <button
+            id="lang-btn-desktop"
+            class="nav-link opacity-70 hover:opacity-100 flex items-center gap-1.5 bg-transparent border-none cursor-pointer"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span id="lang-label-desktop">ES</span>
+          </button>
+          <ul
+            id="lang-dropdown-desktop"
+            role="listbox"
+            aria-label="Seleccionar idioma"
+            class="lang-dropdown hidden absolute right-0 top-[calc(100%+10px)] z-[100] min-w-[130px] bg-white shadow-lg border border-brand-teal/10"
+          >
+            <li role="option" data-lang=""   data-label="ES" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">Español</li>
+            <li role="option" data-lang="en" data-label="EN" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">English</li>
+            <li role="option" data-lang="fr" data-label="FR" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">Français</li>
+            <li role="option" data-lang="de" data-label="DE" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">Deutsch</li>
+            <li role="option" data-lang="it" data-label="IT" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">Italiano</li>
+            <li role="option" data-lang="pt" data-label="PT" class="lang-option px-4 py-2.5 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-brand-teal cursor-pointer hover:bg-brand-teal/5">Português</li>
+          </ul>
+        </div>
       </div>
 
       <!-- CTA — desktop only -->
@@ -65,7 +93,7 @@ function isActive(href: string) {
 <!-- ── Mobile full-screen menu ──────────────────────────────────── -->
 <div
   id="nav-mobile"
-  class="fixed inset-0 z-50 lg:hidden bg-brand-teal flex flex-col justify-between px-8 pt-8 pb-12"
+  class="fixed inset-0 z-50 lg:hidden bg-brand-teal flex flex-col justify-between px-8 pt-8 pb-6 sm:pb-12"
   aria-hidden="true"
   transition:persist
 >
@@ -83,15 +111,15 @@ function isActive(href: string) {
   </div>
 
   <!-- Nav links -->
-  <nav class="flex flex-col gap-4" aria-label="Menú principal">
-    <a href="/"           class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Inicio</a>
-    <a href="/nosotros"   class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Nosotros</a>
-    <a href="/servicios"  class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Servicios</a>
-    <a href="/tecnologia" class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Tecnología</a>
-    <a href="/blog"       class="mobile-nav-link font-serif text-[2.8rem] leading-tight text-white">Blog</a>
+  <nav class="flex flex-col gap-2 sm:gap-4" aria-label="Menú principal">
+    <a href="/"           class="mobile-nav-link font-serif text-[2rem] sm:text-[2.8rem] leading-tight text-white">Inicio</a>
+    <a href="/nosotros"   class="mobile-nav-link font-serif text-[2rem] sm:text-[2.8rem] leading-tight text-white">Nosotros</a>
+    <a href="/servicios"  class="mobile-nav-link font-serif text-[2rem] sm:text-[2.8rem] leading-tight text-white">Servicios</a>
+    <a href="/tecnologia" class="mobile-nav-link font-serif text-[2rem] sm:text-[2.8rem] leading-tight text-white">Tecnología</a>
+    <a href="/blog"       class="mobile-nav-link font-serif text-[2rem] sm:text-[2.8rem] leading-tight text-white">Blog</a>
   </nav>
 
-  <!-- Bottom: CTA + info -->
+  <!-- Bottom: CTA + translate + info -->
   <div class="flex flex-col gap-5">
     <a
       href="https://wa.me/593979286633"
@@ -100,6 +128,35 @@ function isActive(href: string) {
     >
       Reservar Cita
     </a>
+    <!-- Language switcher — mobile -->
+    <div class="relative" id="lang-switcher-mobile">
+      <button
+        id="lang-btn-mobile"
+        class="w-full flex items-center justify-between px-0 py-2 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/70 hover:text-white transition-colors border-b border-white/20 bg-transparent cursor-pointer"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+      >
+        <span class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          Idioma
+        </span>
+        <span id="lang-label-mobile">ES</span>
+      </button>
+      <ul
+        id="lang-dropdown-mobile"
+        role="listbox"
+        class="lang-dropdown hidden absolute bottom-[calc(100%+4px)] left-0 right-0 z-[100] bg-brand-teal border border-white/20"
+      >
+        <li role="option" data-lang=""   data-label="ES" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">Español</li>
+        <li role="option" data-lang="en" data-label="EN" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">English</li>
+        <li role="option" data-lang="fr" data-label="FR" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">Français</li>
+        <li role="option" data-lang="de" data-label="DE" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">Deutsch</li>
+        <li role="option" data-lang="it" data-label="IT" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">Italiano</li>
+        <li role="option" data-lang="pt" data-label="PT" class="lang-option px-4 py-3 font-sans text-[0.65rem] uppercase tracking-widest font-semibold text-white/80 cursor-pointer hover:text-white hover:bg-white/10">Português</li>
+      </ul>
+    </div>
     <div class="flex justify-between text-white/50 font-sans text-[0.65rem] uppercase tracking-widest">
       <a href="tel:0979286633" class="hover:text-white transition-colors">097 928 6633</a>
       <span>Conocoto, Quito</span>
@@ -138,3 +195,88 @@ function isActive(href: string) {
   // Close before Astro swaps the page (View Transitions)
   document.addEventListener('astro:before-swap', closeMenu);
 </script>
+
+<!-- ── Google Translate (widget oculto — UI custom lo controla) ──── -->
+<div id="google_translate_element" class="sr-only" aria-hidden="true"></div>
+
+<script is:inline>
+  window.googleTranslateElementInit = function () {
+    new google.translate.TranslateElement(
+      { pageLanguage: 'es', includedLanguages: 'en,fr,de,it,pt', autoDisplay: false },
+      'google_translate_element'
+    );
+  };
+
+  /* ── Lógica del switcher custom ─────────────────────────────── */
+  function gtSwitchLang(lang, label, btnId, labelId, dropId) {
+    // Actualiza etiqueta del botón
+    var lbl = document.getElementById(labelId);
+    if (lbl) lbl.textContent = label;
+
+    if (lang === '') {
+      // Restaurar español: limpiar cookie googtrans y recargar
+      var d = location.hostname;
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + d + ';';
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + d + ';';
+      window.location.reload();
+      return;
+    }
+
+    // Cambiar el select oculto de Google Translate
+    var sel = document.querySelector('#google_translate_element .goog-te-combo');
+    if (sel) {
+      sel.value = lang;
+      sel.dispatchEvent(new Event('change'));
+    }
+  }
+
+  function initLangSwitcher(btnId, labelId, dropId) {
+    var btn  = document.getElementById(btnId);
+    var drop = document.getElementById(dropId);
+    if (!btn || !drop) return;
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = drop.classList.toggle('hidden');
+      btn.setAttribute('aria-expanded', String(!drop.classList.contains('hidden')));
+    });
+
+    drop.querySelectorAll('.lang-option').forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        var lang  = opt.getAttribute('data-lang') || '';
+        var label = opt.getAttribute('data-label') || 'ES';
+        gtSwitchLang(lang, label, btnId, labelId, dropId);
+        drop.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', function () {
+      drop.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  document.addEventListener('astro:page-load', function () {
+    initLangSwitcher('lang-btn-desktop', 'lang-label-desktop', 'lang-dropdown-desktop');
+    initLangSwitcher('lang-btn-mobile',  'lang-label-mobile',  'lang-dropdown-mobile');
+  });
+</script>
+
+<script
+  is:inline
+  src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+  defer
+></script>
+
+<style is:global>
+  /* ── Eliminar banner / iframe de Google Translate ── */
+  .goog-te-banner-frame,
+  .goog-te-balloon-frame { display: none !important; }
+  body { top: 0 !important; }
+  .skiptranslate > iframe { display: none !important; }
+
+  /* ── Ocultar widget original (usamos UI custom) ── */
+  #google_translate_element { position: absolute; left: -9999px; }
+</style>

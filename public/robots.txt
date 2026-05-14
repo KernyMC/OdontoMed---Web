@@ -1,4 +1,17 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /studio/
 
-# Temporary block while the site is not ready for indexing.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://odonto-med.com/sitemap.xml

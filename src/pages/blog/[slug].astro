@@ -34,36 +34,52 @@ const heroUrl  = post.image
 
 const articleSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": post.title,
-  "description": post.excerpt,
-  "image": heroUrl,
-  "datePublished": post.publishedAt,
-  "inLanguage": "es-EC",
-  "url": `https://odonto-med.com/blog/${post.slug}`,
-  "author": {
-    "@type": "Person",
-    "name": post.author?.name ?? "Odontomed",
-    "worksFor": {
-      "@type": "MedicalOrganization",
-      "name": "Odontomed",
-      "url": "https://odonto-med.com"
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": `https://odonto-med.com/blog/${post.slug}#article`,
+      "headline": post.title,
+      "description": post.excerpt,
+      "image": heroUrl,
+      "datePublished": post.publishedAt,
+      "dateModified": post._updatedAt ?? post.publishedAt,
+      "inLanguage": "es-EC",
+      "url": `https://odonto-med.com/blog/${post.slug}`,
+      "author": {
+        "@type": "Person",
+        "name": post.author?.name ?? "Odontomed",
+        "jobTitle": post.author?.specialty ?? "Especialista Odontológico",
+        "url": "https://odonto-med.com/nosotros",
+        "worksFor": {
+          "@type": "MedicalOrganization",
+          "@id": "https://odonto-med.com/#organization",
+          "name": "Odontomed"
+        }
+      },
+      "publisher": {
+        "@type": "MedicalOrganization",
+        "@id": "https://odonto-med.com/#organization",
+        "name": "Odontomed",
+        "url": "https://odonto-med.com"
+      },
+      "articleSection": post.category,
+      "isPartOf": { "@id": "https://odonto-med.com/#website" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio",  "item": "https://odonto-med.com" },
+        { "@type": "ListItem", "position": 2, "name": "Blog",    "item": "https://odonto-med.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://odonto-med.com/blog/${post.slug}` }
+      ]
     }
-  },
-  "publisher": {
-    "@type": "MedicalOrganization",
-    "@id": "https://odonto-med.com/#organization",
-    "name": "Odontomed",
-    "url": "https://odonto-med.com"
-  },
-  "articleSection": post.category,
-  "keywords": `odontología, ${post.category?.toLowerCase()}, salud dental, Conocoto, Quito, Valle de los Chillos`
+  ]
 });
 ---
 
 <BaseLayout
-  title={`${post.title} | Blog Odontomed`}
-  description={post.excerpt}
+  title={post.seo?.metaTitle ?? `${post.title} | Blog Odontomed`}
+  description={post.seo?.metaDescription ?? post.excerpt}
   ogImage={heroUrl ?? undefined}
   bodyTheme="light"
   schema={articleSchema}

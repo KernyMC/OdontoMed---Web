@@ -10,8 +10,8 @@
 - **Áreas de servicio:** Quito y zonas cercanas (Valle de los Chillos, Sangolquí)
 - **Teléfono:** +593 979 286 633
 - **WhatsApp:** https://wa.me/593979286633
-- **Horario:** Lunes–Viernes 8:30–19:00 | Sábados 8:30–15:00
-- **Valoración:** 4.9/5 (90 opiniones verificadas)
+- **Horario:** Lunes–Viernes 08h30–19h00 | Sábados 08h30–15h00
+- **Valoración:** 4.9/5 (90 opiniones verificadas en Google)
 
 ## Especialidades Odontológicas
 
@@ -33,8 +33,8 @@
 - Inicio: https://odonto-med.com/
 - Nosotros: https://odonto-med.com/nosotros
 - Servicios: https://odonto-med.com/servicios
+- Tecnología: https://odonto-med.com/tecnologia
 - Blog: https://odonto-med.com/blog
-- Contacto: https://odonto-med.com/contacto
 
 ## Páginas de Servicio
 
@@ -42,13 +42,16 @@
 - https://odonto-med.com/servicios/carillas
 - https://odonto-med.com/servicios/endodoncia
 - https://odonto-med.com/servicios/implantes
+- https://odonto-med.com/servicios/odontopediatria
 - https://odonto-med.com/servicios/medicina-general
 - https://odonto-med.com/servicios/pediatria
 - https://odonto-med.com/servicios/dermatologia
 - https://odonto-med.com/servicios/nutricion
 
-## Artículos del Blog
+## Blog
 
-- https://odonto-med.com/blog/futuro-carillas-porcelana
-- https://odonto-med.com/blog/mitos-blanqueamiento-dental
-- https://odonto-med.com/blog/importancia-revisiones-dentales
+Artículos sobre salud oral, odontología y bienestar: https://odonto-med.com/blog
+
+## Sitemap completo
+
+https://odonto-med.com/sitemap.xml

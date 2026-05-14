@@ -1,0 +1,197 @@
+---
+/**
+ * ClinicCarousel.astro
+ * Carrusel con efecto "center-focused": slide activo centrado,
+ * slides adyacentes asoman a los lados. PREV/NEXT sobre los lados.
+ * Swipe táctil incluido. Reutilizable — acepta cualquier array de fotos.
+ */
+
+interface Photo {
+  _id:      string
+  label:    string
+  photoUrl: string
+}
+
+interface Props {
+  photos: Photo[]
+}
+
+const { photos } = Astro.props
+---
+
+<div
+  id="clinic-carousel"
+  class="relative w-full overflow-hidden select-none"
+  role="region"
+  aria-roledescription="carrusel"
+  aria-label="Galería de instalaciones"
+>
+  <!-- Track -->
+  <div id="carousel-track" class="flex" style="gap: 1.25rem">
+    {photos.map((p, i) => (
+      <div
+        class="carousel-slide flex-shrink-0 w-[82%] sm:w-[66%] lg:w-[58%] rounded-2xl overflow-hidden relative bg-brand-teal/10"
+        aria-roledescription="diapositiva"
+        aria-label={p.label}
+        aria-hidden={i !== 0 ? 'true' : 'false'}
+      >
+        <div class="aspect-[4/3] sm:aspect-video relative">
+          <img
+            src={p.photoUrl}
+            alt={p.label}
+            class="absolute inset-0 w-full h-full object-cover"
+            loading={i < 2 ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+          <!-- Gradiente inferior para legibilidad del label -->
+          <div
+            class="absolute inset-0 pointer-events-none"
+            style="background: linear-gradient(to top, rgba(34,74,79,0.72) 0%, transparent 52%)"
+          />
+          <!-- Label -->
+          <p class="absolute bottom-11 sm:bottom-12 left-0 right-0 text-center font-sans text-xs sm:text-sm text-white font-semibold tracking-wide px-6">
+            {p.label}
+          </p>
+          <!-- Dots — solo visibles en el slide activo via JS -->
+          <div class="carousel-dots-slot absolute bottom-4 sm:bottom-5 left-0 right-0 flex justify-center gap-[6px] pointer-events-none" aria-hidden="true">
+            {photos.map((_, di) => (
+              <span
+                class="carousel-dot-inner rounded-full transition-all duration-300"
+                style="width:7px;height:7px"
+                data-di={di}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- PREV -->
+  <button
+    id="carousel-prev"
+    type="button"
+    aria-label="Imagen anterior"
+    class="absolute left-[4%] sm:left-[6.5%] top-1/2 -translate-y-1/2 z-20
+           border border-white/65 text-white font-sans
+           text-[0.5rem] uppercase tracking-[0.22em]
+           px-[10px] py-[6px]
+           hover:bg-white/12 transition-colors duration-200
+           focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+  >
+    Prev
+  </button>
+
+  <!-- NEXT -->
+  <button
+    id="carousel-next"
+    type="button"
+    aria-label="Imagen siguiente"
+    class="absolute right-[4%] sm:right-[6.5%] top-1/2 -translate-y-1/2 z-20
+           border border-white/65 text-white font-sans
+           text-[0.5rem] uppercase tracking-[0.22em]
+           px-[10px] py-[6px]
+           hover:bg-white/12 transition-colors duration-200
+           focus:outline-none focus-visible:ring-1 focus-visible:ring-white"
+  >
+    Next
+  </button>
+</div>
+
+<script is:inline>
+document.addEventListener('astro:page-load', () => {
+  const outer   = document.getElementById('clinic-carousel')
+  const track   = document.getElementById('carousel-track')
+  const slides  = outer?.querySelectorAll('.carousel-slide')
+  const prevBtn = document.getElementById('carousel-prev')
+  const nextBtn = document.getElementById('carousel-next')
+
+  if (!outer || !track || !slides?.length) return
+
+  let current = 0
+  const total = slides.length
+  const GAP   = 20 // 1.25rem
+
+  function calcOffset(index) {
+    const ow = outer.offsetWidth
+    const sw = slides[0].offsetWidth
+    return (ow - sw) / 2 - index * (sw + GAP)
+  }
+
+  function updateDots(active) {
+    // Actualiza los puntos en TODOS los slides (todos tienen la misma lista)
+    outer.querySelectorAll('.carousel-dot-inner').forEach((dot) => {
+      const di = parseInt(dot.dataset.di, 10)
+      if (di === active) {
+        dot.style.background = 'rgba(255,255,255,0.92)'
+        dot.style.width      = '8px'
+        dot.style.height     = '8px'
+      } else {
+        dot.style.background = 'rgba(255,255,255,0.32)'
+        dot.style.width      = '7px'
+        dot.style.height     = '7px'
+      }
+    })
+  }
+
+  function goTo(index) {
+    current = ((index % total) + total) % total
+    track.style.transform = `translateX(${calcOffset(current)}px)`
+    updateDots(current)
+    slides.forEach((s, i) =>
+      s.setAttribute('aria-hidden', String(i !== current))
+    )
+  }
+
+  // Init sin animación
+  track.style.transition = 'none'
+  goTo(0)
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    track.style.transition = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+  }))
+
+  prevBtn?.addEventListener('click', () => goTo(current - 1))
+  nextBtn?.addEventListener('click', () => goTo(current + 1))
+
+  // Clic en dots de cualquier slide
+  outer.querySelectorAll('.carousel-dot-inner').forEach((dot) => {
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.di, 10)))
+    dot.style.cursor = 'pointer'
+    dot.style.pointerEvents = 'auto'
+  })
+
+  // Swipe táctil
+  let tx = 0, ty = 0, swiping = false
+
+  outer.addEventListener('touchstart', (e) => {
+    tx = e.touches[0].clientX
+    ty = e.touches[0].clientY
+    swiping = false
+  }, { passive: true })
+
+  outer.addEventListener('touchmove', (e) => {
+    const dx = Math.abs(e.touches[0].clientX - tx)
+    const dy = Math.abs(e.touches[0].clientY - ty)
+    if (dx > dy && dx > 8) swiping = true
+  }, { passive: true })
+
+  outer.addEventListener('touchend', (e) => {
+    if (!swiping) return
+    const delta = e.changedTouches[0].clientX - tx
+    if (Math.abs(delta) > 48) delta < 0 ? goTo(current + 1) : goTo(current - 1)
+  }, { passive: true })
+
+  // Resize
+  let rTimer
+  window.addEventListener('resize', () => {
+    clearTimeout(rTimer)
+    rTimer = setTimeout(() => {
+      track.style.transition = 'none'
+      goTo(current)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        track.style.transition = 'transform 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      }))
+    }, 120)
+  })
+})
+</script>

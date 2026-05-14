@@ -10,15 +10,21 @@ interface Props {
   schema?:      string; // JSON-LD structured data as serialized string
 }
 
+const SITE = 'https://odonto-med.com';
+const DEFAULT_OG = 'https://cdn.sanity.io/images/g6lpsvgv/production/ee059107b44222563e66ea5a2a3f15ca9157987e-1130x1025.webp';
+
 const {
   title       = 'Odontomed | Clínica Odontológica en Conocoto, Valle de los Chillos',
   description = 'Clínica dental en Conocoto, Quito. Especialistas en ortodoncia, implantes, carillas, endodoncia y medicina general. Tecnología de punta para toda la familia.',
-  ogImage     = '/og-image.jpg',
+  ogImage     = DEFAULT_OG,
   bodyTheme   = 'dark',
   schema,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-med.com');
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? SITE);
+
+// og:image debe ser URL absoluta para que funcione en redes sociales
+const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${SITE}${ogImage}`;
 ---
 
 <!DOCTYPE html>
@@ -39,7 +45,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-m
     <meta property="og:url"         content={canonicalURL} />
     <meta property="og:title"       content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image"       content={ogImage} />
+    <meta property="og:image"       content={ogImageAbsolute} />
     <meta property="og:locale"      content="es_EC" />
     <meta property="og:site_name"   content="Odontomed" />
 
@@ -47,7 +53,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://odonto-m
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image"       content={ogImage} />
+    <meta name="twitter:image"       content={ogImageAbsolute} />
 
     <!-- Structured Data (JSON-LD) -->
     {schema && <script type="application/ld+json" set:html={schema} />}

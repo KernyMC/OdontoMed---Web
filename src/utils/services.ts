@@ -11,10 +11,11 @@ export interface ServiceBenefit {
 }
 
 export interface ServiceSpecialist {
-  _id:      string
-  name:     string
-  specialty: string
-  photoUrl: string | null
+  _id:         string
+  name:        string
+  specialty:   string
+  photoUrl:    string | null
+  description?: string
 }
 
 export interface SanityService {
@@ -30,6 +31,7 @@ export interface SanityService {
   benefits?: ServiceBenefit[]
   whyUs?: string
   specialists?: ServiceSpecialist[]
+  seo?: { metaTitle?: string; metaDescription?: string }
 }
 
 // ── Queries GROQ ─────────────────────────────────────────────────────────────
@@ -48,7 +50,7 @@ const SERVICES_QUERY = defineQuery(/* groq */ `
     body,
     benefits[] { _key, title, description },
     whyUs,
-    "specialists": specialists[]->{ _id, name, specialty, "photoUrl": photo.asset->url }
+    "specialists": specialists[]->{ _id, name, specialty, description, "photoUrl": photo.asset->url }
   }
 `)
 
@@ -64,7 +66,8 @@ const SERVICE_BY_SLUG_QUERY = defineQuery(/* groq */ `
     body,
     benefits[] { _key, title, description },
     whyUs,
-    "specialists": specialists[]->{ _id, name, specialty, "photoUrl": photo.asset->url }
+    seo { metaTitle, metaDescription },
+    "specialists": specialists[]->{ _id, name, specialty, description, "photoUrl": photo.asset->url }
   }
 `)
 

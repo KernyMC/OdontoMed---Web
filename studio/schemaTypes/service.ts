@@ -123,6 +123,32 @@ export default defineType({
       of: [defineArrayMember({ type: 'reference', to: [{ type: 'specialist' }] })],
     }),
 
+    // ── SEO ──────────────────────────────────────────────────
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'object',
+      description: 'Controla cómo aparece este servicio en Google. Si están vacíos, se usan el título y la descripción corta.',
+      options: {collapsible: true, collapsed: true},
+      fields: [
+        defineField({
+          name: 'metaTitle',
+          title: 'Meta título',
+          type: 'string',
+          description: 'Máx. 60 caracteres.',
+          validation: (Rule) => Rule.max(60),
+        }),
+        defineField({
+          name: 'metaDescription',
+          title: 'Meta descripción',
+          type: 'text',
+          rows: 3,
+          description: 'Máx. 160 caracteres.',
+          validation: (Rule) => Rule.max(160),
+        }),
+      ],
+    }),
+
     // ── Orden ────────────────────────────────────────────────
     defineField({
       name: 'order',
